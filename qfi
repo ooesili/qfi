@@ -1,0 +1,97 @@
+#!/usr/bin/env perl
+use strict; use warnings;
+use File::Path 'make_path';
+use File::Spec;
+use File::Basename;
+use Getopt::Std;
+
+my $conf_dir;
+$0 = basename $0; # remove path from program name
+
+# first arg is name, second is the file; symlink the file to the name
+sub add {
+    my $link = File::Spec->catfile($conf_dir, $_[0]);
+    # symlinks act funny with relative paths
+    my $file = File::Spec->rel2abs($_[1]);
+    symlink $file, $link or die "$0: error creating link for `$_[0]': $!\n"
+}
+
+# first arg is name; remove associated link
+sub remove {
+    my $link = File::Spec->catfile($conf_dir, $_[0]);
+    unlink $link or die "$0: error removing link for `$_[0]': $!\n";
+}
+
+# first arg is name; edit file pointed to by the link assocated with the name
+sub edit {
+    my ($env_editor, $editor, $link, $file, $uid);
+    # follow link
+    $link = File::Spec->catfile($conf_dir, $_[0]);
+    if (-l $link) { $file = readlink $link; }
+    else { die "$0: cannot find link for `$_[0]': $!\n"; }
+    # see who owns it
+    if (-f $file) { $uid = (stat $file)[4]; }
+    else { die "$0: cannot stat `$file': $!\n"; }
+    # pick editor
+    if ($uid == 0) {
+        $editor = "sudoedit";
+    }
+    elsif (defined($env_editor = $ENV{'EDITOR'})) {
+        $editor = $env_editor;
+    }
+    else {
+        $editor = "vi";
+    }
+    # run editor
+    exec "$editor $file";
+}
+
+# set appropriate configuration directory and create it if it does not exist
+{
+    my ($xdg_dir, $home_dir);
+    # first see if $XDG_CONFIG_HOME is defined
+    if (defined($xdg_dir = $ENV{'XDG_CONFIG_HOME'})) {
+        $conf_dir = File::Spec->catdir($xdg_dir, "qfi");
+    }
+    # then try to build conf_dir path from $HOME
+    elsif (defined($home_dir = $ENV{'HOME'})) {
+        $conf_dir = File::Spec->catdir($home_dir, ".config", "qfi");
+    }
+    else {
+        warn "$0: \$HOME not set\n";
+        exit(1);
+    }
+    # create configration directory if it doesn't exist
+    unless (-d $conf_dir) {
+        make_path($conf_dir) or die "$0: cannot create $conf_dir: $!\n";
+    }
+}
+
+# parse command line options and take action
+{
+    # simple error reporting function
+    sub err { warn $_[0]; exit(1); }
+
+    # parse options
+    my %opts;
+    getopts('ar', \%opts) or exit(1);
+    # test for number of arguments and options
+    &err("$0: too many options\n")		if keys %opts > 1;
+    &err("$0: no name specified\n")		if @ARGV < 1;
+    # add
+    if (exists $opts{'a'}) {
+        &err("$0: no file specified\n")		if @ARGV < 2;
+        &err("$0: too many arguments\n")	if @ARGV > 2;
+        &add($ARGV[0], $ARGV[1]);
+    }
+    # remove
+    elsif (exists $opts{'r'}) {
+        &err("$0: too many arguments\n")	if @ARGV > 1;
+        &remove($ARGV[0]);
+    }
+    # edit
+    else {
+        &err("$0: too many arguments\n")	if @ARGV > 1;
+        &edit($ARGV[0])
+    }
+}
