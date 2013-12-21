@@ -10,6 +10,7 @@ $Getopt::Std::STANDARD_HELP_VERSION = 1;
 sub main::HELP_MESSAGE {
     print "Usage: $0 [-r] TARGET\n";
     print "       $0 -a TARGET FILENAME\n";
+    print "       $0 -l [TARGET]\n";
 }
 sub main::VERSION_MESSAGE {
     print "qfi 0.1\n";
@@ -56,6 +57,26 @@ sub edit {
     exec "$editor $file";
 }
 
+# list all defined targets, or the dest of a single link, if specified
+sub list {
+    # print destination if an argument was given
+    if (defined $_[0]) {
+        my ($file, $link);
+        $file = File::Spec->catfile($conf_dir, $_[0]);
+        if (-l $file) { $link = readlink $file; }
+        else { die "$0: cannot find link for: `$_[0]': $!\n"; }
+        print "$link\n";
+    }
+    # otherwise print all of the targets
+    else {
+        my @files = glob File::Spec->catfile($conf_dir,"*");
+        for (sort @files) {
+            my $target = fileparse($_);
+            printf "$target\n";
+        }
+    }
+}
+
 # set appropriate configuration directory and create it if it does not exist
 {
     my ($xdg_dir, $home_dir);
@@ -88,23 +109,30 @@ sub edit {
 
     # parse options
     my %opts;
-    getopts('ar', \%opts) or &err;
-    # test for number of arguments and options
+    getopts('arl', \%opts) or &err;
+    # test for number of arguments and options, then call command
     &err("$0: too many options\n")		if keys %opts > 1;
-    &err("$0: no target specified\n")		if @ARGV < 1;
     # add
     if (exists $opts{'a'}) {
+        &err("$0: no target specified\n")	if @ARGV < 1;
         &err("$0: no file specified\n")		if @ARGV < 2;
         &err("$0: too many arguments\n")	if @ARGV > 2;
         &add($ARGV[0], $ARGV[1]);
     }
     # remove
     elsif (exists $opts{'r'}) {
+        &err("$0: no target specified\n")	if @ARGV < 1;
         &err("$0: too many arguments\n")	if @ARGV > 1;
         &remove($ARGV[0]);
     }
+    # list
+    elsif (exists $opts{'l'}) {
+        &err("$0: too many arguments\n")	if @ARGV > 1;
+        &list($ARGV[0]);
+    }
     # edit
     else {
+        &err("$0: no target specified\n")	if @ARGV < 1;
         &err("$0: too many arguments\n")	if @ARGV > 1;
         &edit($ARGV[0])
     }
