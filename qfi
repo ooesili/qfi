@@ -5,6 +5,16 @@ use File::Spec;
 use File::Basename;
 use Getopt::Std;
 
+# usage and version
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+sub main::HELP_MESSAGE {
+    print "Usage: $0 [-r] TARGET\n";
+    print "       $0 -a TARGET FILENAME\n";
+}
+sub main::VERSION_MESSAGE {
+    print "qfi 0.1\n";
+}
+
 my $conf_dir;
 $0 = basename $0; # remove path from program name
 
@@ -70,14 +80,18 @@ sub edit {
 # parse command line options and take action
 {
     # simple error reporting function
-    sub err { warn $_[0]; exit(1); }
+    sub err {
+        warn $_[0] if exists $_[0];
+        &main::HELP_MESSAGE;
+        exit(2);
+    }
 
     # parse options
     my %opts;
-    getopts('ar', \%opts) or exit(1);
+    getopts('ar', \%opts) or &err;
     # test for number of arguments and options
     &err("$0: too many options\n")		if keys %opts > 1;
-    &err("$0: no name specified\n")		if @ARGV < 1;
+    &err("$0: no target specified\n")		if @ARGV < 1;
     # add
     if (exists $opts{'a'}) {
         &err("$0: no file specified\n")		if @ARGV < 2;
