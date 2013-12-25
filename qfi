@@ -8,8 +8,9 @@ use Getopt::Std;
 # usage and version
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 sub main::HELP_MESSAGE {
-    print "Usage: $0 [-r] TARGET\n";
+    print "Usage: $0 [-d] TARGET\n";
     print "       $0 -a TARGET FILENAME\n";
+    print "       $0 -r TARGET NEWNAME\n";
     print "       $0 -l [TARGET]\n";
 }
 sub main::VERSION_MESSAGE {
@@ -27,8 +28,8 @@ sub add {
     symlink $file, $link or die "$0: error creating link for `$_[0]': $!\n"
 }
 
-# first arg is name; remove associated link
-sub remove {
+# first arg is name; delete associated link
+sub delete {
     my $link = File::Spec->catfile($conf_dir, $_[0]);
     unlink $link or die "$0: error removing link for `$_[0]': $!\n";
 }
@@ -77,6 +78,13 @@ sub list {
     }
 }
 
+# rename a target
+sub rename {
+    chdir $conf_dir;
+    die "$0: target `$_[0]' does not exist\n" if (! -l $_[0]);
+    rename $_[0], $_[1];
+}
+
 # set appropriate configuration directory and create it if it does not exist
 {
     my ($xdg_dir, $home_dir);
@@ -109,7 +117,7 @@ sub list {
 
     # parse options
     my %opts;
-    getopts('arl', \%opts) or &err;
+    getopts('adlr', \%opts) or &err;
     # test for number of arguments and options, then call command
     &err("$0: too many options\n")		if keys %opts > 1;
     # add
@@ -119,16 +127,23 @@ sub list {
         &err("$0: too many arguments\n")	if @ARGV > 2;
         &add($ARGV[0], $ARGV[1]);
     }
-    # remove
-    elsif (exists $opts{'r'}) {
+    # delete
+    elsif (exists $opts{'d'}) {
         &err("$0: no target specified\n")	if @ARGV < 1;
         &err("$0: too many arguments\n")	if @ARGV > 1;
-        &remove($ARGV[0]);
+        &delete($ARGV[0]);
     }
     # list
     elsif (exists $opts{'l'}) {
         &err("$0: too many arguments\n")	if @ARGV > 1;
         &list($ARGV[0]);
+    }
+    # rename
+    elsif (exists $opts{'r'}) {
+        &err("$0: no target specified\n")	if @ARGV < 1;
+        &err("$0: new name not specified\n")	if @ARGV < 2;
+        &err("$0: too many arguments\n")	if @ARGV > 2;
+        &rename($ARGV[0], $ARGV[1]);
     }
     # edit
     else {
