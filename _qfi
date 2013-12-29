@@ -1,0 +1,48 @@
+#compdef qfi
+
+# lists all target names
+_qfi_targets() {
+    local target
+    local -a targets
+    qfi -l | while read target; do
+        targets+=$target
+    done
+    _describe -t qfi-targets 'target' targets
+}
+
+# "complete" a new target name
+_qfi_new_target() {
+    _guard "*" 'new target name'
+}
+
+# command for each action
+_qfi_cmd_delete() {
+    _arguments -s : \
+        '2: :_qfi_targets'
+}
+_qfi_cmd_rename() {
+    _arguments -s : \
+        '2: :_qfi_targets' \
+        '3: :_qfi_new_target' \
+}
+_qfi_cmd_list() {
+    _arguments -s : \
+        '2:: :_qfi_targets' \
+}
+_qfi_cmd_add() {
+    _arguments -s : \
+        '2: :_qfi_new_target' \
+        '3: :_files'
+}
+
+# main dispatcher
+_qfi() {
+    _arguments -S -s : \
+        '-d[delete target]:*: :_qfi_cmd_delete' \
+        '-a[add target]:*: :_qfi_cmd_add' \
+        '-r[rename target]:*: :_qfi_cmd_rename' \
+        '-l[list targets]:*: :_qfi_cmd_list' \
+        '(-): :_qfi_targets'
+}
+
+_qfi "$@"
