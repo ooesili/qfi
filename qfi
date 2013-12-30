@@ -9,7 +9,7 @@ use Getopt::Std;
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 sub main::HELP_MESSAGE {
     print "Usage: $0 [-d] TARGET\n";
-    print "       $0 -a TARGET FILENAME\n";
+    print "       $0 [-a|-m] TARGET FILENAME\n";
     print "       $0 -r TARGET NEWNAME\n";
     print "       $0 -l [TARGET]\n";
 }
@@ -89,6 +89,12 @@ sub rename {
     rename $_[0], $_[1];
 }
 
+# first arg is target, second is filename; move a target's destination
+sub move {
+    &delete($_[0]);     # delete old target
+    &add($_[0], $_[1]); # add target with new destination
+}
+
 # set appropriate configuration directory and create it if it does not exist
 {
     my ($xdg_dir, $home_dir);
@@ -121,7 +127,7 @@ sub rename {
 
     # parse options
     my %opts;
-    getopts('adlr', \%opts) or &err;
+    getopts('adlmr', \%opts) or &err;
     # test for number of arguments and options, then call command
     &err("$0: too many options\n")		if keys %opts > 1;
     # add
@@ -141,6 +147,13 @@ sub rename {
     elsif (exists $opts{'l'}) {
         &err("$0: too many arguments\n")	if @ARGV > 1;
         &list($ARGV[0]);
+    }
+    # move
+    elsif (exists $opts{'m'}) {
+        &err("$0: no target specified\n")	if @ARGV < 1;
+        &err("$0: no file specified\n")		if @ARGV < 2;
+        &err("$0: too many arguments\n")	if @ARGV > 2;
+        &move($ARGV[0], $ARGV[1]);
     }
     # rename
     elsif (exists $opts{'r'}) {

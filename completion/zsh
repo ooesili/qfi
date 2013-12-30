@@ -34,6 +34,11 @@ _qfi_cmd_add() {
         '2: :_qfi_new_target' \
         '3: :_files'
 }
+_qfi_cmd_move() {
+    _arguments -s : \
+        '2: :_qfi_targets' \
+        '3: :_files'
+}
 _qfi_none() {
     _arguments -s : '1: :'
 }
@@ -43,6 +48,7 @@ _qfi() {
     _arguments -S -s : \
         '-d[delete target]:*: :_qfi_cmd_delete' \
         '-a[add target]:*: :_qfi_cmd_add' \
+        '-m[move target]:*: :_qfi_cmd_move' \
         '-r[rename target]:*: :_qfi_cmd_rename' \
         '-l[list targets]:*: :_qfi_cmd_list' \
         '--help[display help]:*: :_qfi_none' \

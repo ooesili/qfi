@@ -8,7 +8,7 @@ _qfi_targets() {
 # complete options
 _qfi_opts() {
     local opts
-    opts="-a -d -l -r --help --version"
+    opts="-a -d -l -m -r --help --version"
     COMPREPLY=( $(compgen -W "${opts}" -- $1) )
 }
 
@@ -47,6 +47,13 @@ _qfi() {
             -l)
                 if [[ ${COMP_CWORD} -eq 2 ]]; then
                     _qfi_targets $cur
+                fi
+                ;;
+            -m)
+                if [[ ${COMP_CWORD} -eq 2 ]]; then
+                    _qfi_targets $cur
+                elif [[ ${COMP_CWORD} -eq 3 ]]; then
+                    _filedir
                 fi
                 ;;
             -r)
