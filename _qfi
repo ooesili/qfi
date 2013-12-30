@@ -34,6 +34,9 @@ _qfi_cmd_add() {
         '2: :_qfi_new_target' \
         '3: :_files'
 }
+_qfi_none() {
+    _arguments -s : '1: :'
+}
 
 # main dispatcher
 _qfi() {
@@ -42,6 +45,8 @@ _qfi() {
         '-a[add target]:*: :_qfi_cmd_add' \
         '-r[rename target]:*: :_qfi_cmd_rename' \
         '-l[list targets]:*: :_qfi_cmd_list' \
+        '--help[display help]:*: :_qfi_none' \
+        '--version[display version]:*: :_qfi_none' \
         '(-): :_qfi_targets'
 }
 
