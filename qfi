@@ -31,7 +31,7 @@ sub add {
 # first arg is name; delete associated link
 sub delete {
     my $link = File::Spec->catfile($conf_dir, $_[0]);
-    unlink $link or die "$0: error removing link for `$_[0]': $!\n";
+    unlink $link or die "$0: error removing target `$_[0]': $!\n";
 }
 
 # first arg is name; edit file pointed to by the link assocated with the name
@@ -40,7 +40,7 @@ sub edit {
     # follow link
     $link = File::Spec->catfile($conf_dir, $_[0]);
     if (-l $link) { $file = readlink $link; }
-    else { die "$0: cannot find link for `$_[0]': $!\n"; }
+    else { die "$0: cannot find target `$_[0]': $!\n"; }
     # see who owns it
     if (-f $file) { $uid = (stat $file)[4]; }
     else { die "$0: cannot stat `$file': $!\n"; }
@@ -65,7 +65,7 @@ sub list {
         my ($file, $link);
         $file = File::Spec->catfile($conf_dir, $_[0]);
         if (-l $file) { $link = readlink $file; }
-        else { die "$0: cannot find link for: `$_[0]': $!\n"; }
+        else { die "$0: cannot find target `$_[0]': $!\n"; }
         print "$link\n";
     }
     # otherwise print all of the targets
@@ -81,7 +81,7 @@ sub list {
 # rename a target
 sub rename {
     chdir $conf_dir;
-    die "$0: target `$_[0]' does not exist\n" if (! -l $_[0]);
+    die "$0: cannot find target `$_[0]': $!'\n" if (! -l $_[0]);
     rename $_[0], $_[1];
 }
 
