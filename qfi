@@ -22,6 +22,8 @@ $0 = basename $0; # remove path from program name
 
 # first arg is name, second is the file; symlink the file to the name
 sub add {
+    # check for slashes in target name
+    die "$0: illegal target name: `$_[0]'\n" if ($_[0] =~ m|/|);
     my $link = File::Spec->catfile($conf_dir, $_[0]);
     # symlinks act funny with relative paths
     my $file = File::Spec->rel2abs($_[1]);
@@ -82,6 +84,8 @@ sub list {
 sub rename {
     chdir $conf_dir;
     die "$0: cannot find target `$_[0]': $!'\n" if (! -l $_[0]);
+    # check for slashes in target name
+    die "$0: illegal target name: `$_[0]'\n" if ($_[0] =~ m|/|);
     rename $_[0], $_[1];
 }
 
