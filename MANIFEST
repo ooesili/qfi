@@ -1,0 +1,8 @@
+bin/qfi
+Builder.pm
+Build.PL
+completion/bash.comp
+completion/zsh.comp
+COPYING
+lib/Qfi.pm
+MANIFEST			This list of files

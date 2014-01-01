@@ -1,0 +1,214 @@
+#!/usr/bin/env perl
+
+# qfi - quicky edit commonly used files
+#
+# Copyright (C) 2014 Wesley Merkel <ooesili@gmail.com>
+#
+# This file is part of qfi
+#
+# qfi is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# qfi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with qfi.  If not, see <http://www.gnu.org/licenses/>.
+
+use strict; use warnings;
+use File::Basename;
+use Getopt::Std;
+use Qfi;
+
+# usage and version
+$Getopt::Std::STANDARD_HELP_VERSION = 1;
+sub main::HELP_MESSAGE {
+    print "Usage: $0 [-d] TARGET\n";
+    print "       $0 [-a|-m] TARGET FILENAME\n";
+    print "       $0 -r TARGET NEWNAME\n";
+    print "       $0 -l [TARGET]\n";
+}
+sub main::VERSION_MESSAGE {
+    print "qfi 0.1.0\n";
+}
+
+$0 = basename $0; # remove path from program name
+
+# simple error reporting function
+sub err {
+    warn $_[0] if exists $_[0];
+    &main::HELP_MESSAGE;
+    exit(2);
+}
+
+# parse command line options and take action
+my %opts;
+getopts('adlmr', \%opts) or &err;
+
+# test for number of arguments and options, then call command
+&err("$0: too many options\n")		if keys %opts > 1;
+
+# add
+if (exists $opts{'a'}) {
+    &err("$0: no target specified\n")		if @ARGV < 1;
+    &err("$0: no file specified\n")		if @ARGV < 2;
+    &err("$0: too many arguments\n")		if @ARGV > 2;
+    &Qfi::add($ARGV[0], $ARGV[1]);
+}
+# delete
+elsif (exists $opts{'d'}) {
+    &err("$0: no target specified\n")		if @ARGV < 1;
+    &err("$0: too many arguments\n")		if @ARGV > 1;
+    &Qfi::delete($ARGV[0]);
+}
+# list
+elsif (exists $opts{'l'}) {
+    &err("$0: too many arguments\n")		if @ARGV > 1;
+    &Qfi::list($ARGV[0]);
+}
+# move
+elsif (exists $opts{'m'}) {
+    &err("$0: no target specified\n")		if @ARGV < 1;
+    &err("$0: no file specified\n")		if @ARGV < 2;
+    &err("$0: too many arguments\n")		if @ARGV > 2;
+    &Qfi::move($ARGV[0], $ARGV[1]);
+}
+# rename
+elsif (exists $opts{'r'}) {
+    &err("$0: no target specified\n")		if @ARGV < 1;
+    &err("$0: new name not specified\n"	)	if @ARGV < 2;
+    &err("$0: too many arguments\n")		if @ARGV > 2;
+    &Qfi::rename($ARGV[0], $ARGV[1]);
+}
+# edit
+else {
+    &err("$0: no target specified\n")		if @ARGV < 1;
+    &err("$0: too many arguments\n")		if @ARGV > 1;
+    &Qfi::edit($ARGV[0])
+}
+__END__
+=head1 NAME
+
+qfi - quicky edit commonly used files
+
+=head1 SYNOPSIS
+
+qfi [B<-d>] I<target>
+
+qfi [B<-d>|B<-m>] I<target> <filename>
+
+qfi B<-r> I<target> I<newname>
+
+qfi B<-l> [I<target>]
+
+=head1 DESCRIPTION
+
+B<qfi> is a command line tool for UNIX-like systems, for quickly editing
+commonly used files.  This is accomplished through the use of I<targets>, which
+are short aliases for files.  The quickest way to understand how this works is
+to see the L</EXAMPLE> section below.
+
+A I<target> is just a symbolic link in B<qfi>'s configuration directory
+pointing to some file.  When called with no options, B<qfi> will open the given
+I<target> using the following rules:
+
+=over
+
+=item *
+
+If the file is owned by the root user, open the file with B<sudoedit>.
+
+=item *
+
+If the file is owned by you, open it with the program specified in the
+B<$EDITOR> environment variable.
+
+=item *
+
+If the file is owned by you, but B<$EDITOR> is not defined, fall back to vi.
+
+=back
+
+I<Targets> can be added and manipulated with the options specified below.
+
+The configuration directory defaults to B<$HOME>/.config/qfi, but
+B<$XDG_CONFIG_HOME>/qfi will be used if B<$XDG_CONFIG_HOME> is defined.
+
+=head2 Options
+
+=over
+
+=item B<-a> I<target> <filename>
+
+Add a I<target> pointing to the specified file.
+
+=item B<-m> I<target> <filename>
+
+Move the destination of a I<target> to a new file.
+
+=item B<-d> I<target>
+
+Delete a I<target>.
+
+=item B<-l> [I<target>]
+
+List all I<targets>, or where the specified I<target> points to, if one was
+given.
+
+=item B<-r> I<target> I<newname>
+
+Rename a I<target>.
+
+=item B<--help>
+
+Display usage information.
+
+=item B<--version>
+
+Display usage information.
+
+=back
+
+=head1 EXAMPLE
+
+Say we wanted to edit the PHP configuration file (without using B<qfi>), we
+would have to type:
+
+    vim /etc/php/php.ini
+
+After we look through the file and find the option we want to change, we
+realize that we forgot to open the file with B<sudoedit>, so we  have to close
+it and reopen it with B<sudoedit:>
+
+    sudoedit /etc/php/php.ini
+
+With B<qfi>, we can define a I<target> that points to the file that we want to
+edit:
+
+    qfi -a php /etc/php/php.ini
+
+Now, whenever we want to open the php configuration file, we can just call
+B<qfi> with the I<target> name:
+
+    qfi php
+
+which will open the file B<sudoedit>, because it is owned by the root user.
+
+=head1 SEE ALSO
+
+L<sudoedit(8)>
+
+=head1 AUTHOR
+
+Wesley Merkel <ooesili@gmail.com>
+
+=head1 BUGS
+
+No known bugs.  If you find one, please send me an email at ooesili@gmail.com
+describing the problem.
+
+=cut

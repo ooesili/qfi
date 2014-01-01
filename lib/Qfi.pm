@@ -1,24 +1,41 @@
 #!/usr/bin/env perl
+
+# qfi - quicky edit commonly used files
+#
+# Copyright (C) 2014 Wesley Merkel <ooesili@gmail.com>
+#
+# This file is part of qfi
+#
+# qfi is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# qfi is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with qfi.  If not, see <http://www.gnu.org/licenses/>.
+
+package Qfi;
+
 use strict; use warnings;
 use File::Path 'make_path';
-use File::Spec;
 use File::Basename;
-use Getopt::Std;
+use File::Spec;
 
-# usage and version
-$Getopt::Std::STANDARD_HELP_VERSION = 1;
-sub main::HELP_MESSAGE {
-    print "Usage: $0 [-d] TARGET\n";
-    print "       $0 [-a|-m] TARGET FILENAME\n";
-    print "       $0 -r TARGET NEWNAME\n";
-    print "       $0 -l [TARGET]\n";
-}
-sub main::VERSION_MESSAGE {
-    print "qfi 0.1\n";
+BEGIN {
+    require Exporter;
+
+    our $VERSION = 0.1.0;
+    our @ISA = qw(Exporter);
+    #our @EXPORT = qw(add delete edit list move rename conf_dir);
+    #our @EXPORT_OK = qw();
 }
 
-my $conf_dir;
-$0 = basename $0; # remove path from program name
+our $conf_dir;
 
 # first arg is name, second is the file; symlink the file to the name
 sub add {
@@ -95,7 +112,8 @@ sub move {
     &add($_[0], $_[1]); # add target with new destination
 }
 
-# set appropriate configuration directory and create it if it does not exist
+# set and return appropriate configuration directory
+# create it if it does not exists
 {
     my ($xdg_dir, $home_dir);
     # first see if $XDG_CONFIG_HOME is defined
@@ -116,56 +134,5 @@ sub move {
     }
 }
 
-# parse command line options and take action
-{
-    # simple error reporting function
-    sub err {
-        warn $_[0] if exists $_[0];
-        &main::HELP_MESSAGE;
-        exit(2);
-    }
-
-    # parse options
-    my %opts;
-    getopts('adlmr', \%opts) or &err;
-    # test for number of arguments and options, then call command
-    &err("$0: too many options\n")		if keys %opts > 1;
-    # add
-    if (exists $opts{'a'}) {
-        &err("$0: no target specified\n")	if @ARGV < 1;
-        &err("$0: no file specified\n")		if @ARGV < 2;
-        &err("$0: too many arguments\n")	if @ARGV > 2;
-        &add($ARGV[0], $ARGV[1]);
-    }
-    # delete
-    elsif (exists $opts{'d'}) {
-        &err("$0: no target specified\n")	if @ARGV < 1;
-        &err("$0: too many arguments\n")	if @ARGV > 1;
-        &delete($ARGV[0]);
-    }
-    # list
-    elsif (exists $opts{'l'}) {
-        &err("$0: too many arguments\n")	if @ARGV > 1;
-        &list($ARGV[0]);
-    }
-    # move
-    elsif (exists $opts{'m'}) {
-        &err("$0: no target specified\n")	if @ARGV < 1;
-        &err("$0: no file specified\n")		if @ARGV < 2;
-        &err("$0: too many arguments\n")	if @ARGV > 2;
-        &move($ARGV[0], $ARGV[1]);
-    }
-    # rename
-    elsif (exists $opts{'r'}) {
-        &err("$0: no target specified\n")	if @ARGV < 1;
-        &err("$0: new name not specified\n")	if @ARGV < 2;
-        &err("$0: too many arguments\n")	if @ARGV > 2;
-        &rename($ARGV[0], $ARGV[1]);
-    }
-    # edit
-    else {
-        &err("$0: no target specified\n")	if @ARGV < 1;
-        &err("$0: too many arguments\n")	if @ARGV > 1;
-        &edit($ARGV[0])
-    }
-}
+# report a successful import
+1;
