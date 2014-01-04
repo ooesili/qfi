@@ -21,6 +21,7 @@ package Builder;
 
 use strict; use warnings;
 use Module::Build;
+use ExtUtils::Install;
 use File::Spec;
 use IO::Compress::Gzip qw(gzip $GzipError);
 use parent 'Module::Build';
@@ -72,3 +73,12 @@ sub ACTION_build {
 }
 
 1;
+
+# uninstallation action
+sub ACTION_uninstall {
+    my $self = shift;
+    # get path of .packlist file
+    my $packlist = $self->install_map->{'write'};
+    # uninstall package
+    &ExtUtils::Install::uninstall($packlist);
+}
