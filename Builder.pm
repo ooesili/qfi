@@ -57,9 +57,9 @@ sub ACTION_build {
     if (defined $base) {
         # set relative paths
         $self->install_base_relpaths(
-            'bashcomp' => 'bash-completion/completions');
+            'bashcomp' => 'share/bash-completion/completions');
         $self->install_base_relpaths(
-            'zshcomp'  => 'zsh/site-functions');
+            'zshcomp'  => 'share/zsh/site-functions');
     }
     else {
         # set absolute paths
