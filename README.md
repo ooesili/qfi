@@ -108,3 +108,8 @@ This one is optional.  `qfi` can provide bash tab-completion support for
 **targets** and options if the
 [bash-completion](http://bash-completion.alioth.debian.org/) software is
 installed.
+
+Distribution Packages
+---------------------
+
+ *  Arch Linux: [qfi](https://aur.archlinux.org/packages/qfi/) (AUR)
