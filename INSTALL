@@ -1,0 +1,87 @@
+Installation Instructions
+=========================
+
+The installation process is a simple, three-step process:
+
+    $ perl Build.PL
+    $ ./Build
+    # ./Build install
+
+(the last command must be run as root for system-wide installations). This will
+install qfi into /usr/bin and /usr/share. If you want to change the root of the
+installation (if you are creating an installable package, for example) you can
+use the "--destdir=..." option during the either the first or third step:
+
+    $ perl Build.PL --destdir=/tmp/qfi_install
+
+or:
+
+    # ./Build install --destdir=/tmp/qfi_install
+
+Note that options set the first step will be overridden by options set at the
+third step.
+
+To install qfi into /usr/local/* instead of /usr/bin and /usr/share, you can
+use the "--install_base=..." option, again at either the first or third step:
+
+    $ perl Build.PL --install_base=/usr/local
+
+or:
+
+    # ./Build install --install_base=/usr/local
+
+
+Uninstallation Instructions
+---------------------------
+
+If you want to uninstall qfi, you can run:
+
+    $ ./Build uninstall
+
+If you specified an alternate install path for qfi, you need to call "./Build
+uninstall" with the same options that you used to install, so that the script
+knows where to uninstall the files from. An easy way to deal with this is to
+specify the path during the first installation step:
+
+    $ perl Build.PL --destdir=/tmp/qfi_install --install_base=/usr/local
+
+which will keep these settings for all subsequent "./Build install" and
+"./Build uninstall" calls, unless you call "perl Build.PL" again with different
+(or no) options, or override those settings during install or uninstall
+commands.
+
+The uninstall process will likely leave a few empty directories, so you are
+going to have to remove those by hand. I recommend:
+
+    $ rmdir -p empty/directory/tree
+
+which will remove all three directories (but only if each directory is empty).
+
+
+Notes for Alternative Installation Paths
+----------------------------------------
+
+If you installed qfi into a non-standard path, a few things must be done to get
+full functionality. First, you need to add the library path of the installation
+to the PERL5LIB environment variable so that Perl knows were to find the Qfi.pm
+module. For example, if you installed qfi with "--destdir=$HOME/local
+--install_base='.'", you must set the PERL5LIB (in your zsh or bashrc) to
+reflect this:
+
+    export PERL5LIB=$HOME/local/lib/perl5
+
+or, if there is already something in that variable:
+
+    export PERL5LIB=$HOME/local/lib/perl5:$PERL5LIB
+
+Second, if you want zsh tab-completion, you need to add the directory
+containing the zsh completion function to your $fpath variable before you
+initialize the completion system (i.e., near the top of your .zshrc, or in
+.zshenv or .zshprofile):
+
+    fpath=($HOME/local/share/zsh/site-functions/ $fpath)
+
+Lastly, if you want bash tab-completion, you need to source the completion file
+in your bashrc:
+
+    source $HOME/local/share/bash-completion/completions/qfi
