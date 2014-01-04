@@ -48,4 +48,27 @@ sub ACTION_docs {
     chdir $self->base_dir;
 };
 
+# set relative installation paths for completion functions
+sub ACTION_build {
+    my $self = shift;
+    # set path for completions based on whether install_base is specified
+    my $base = $self->install_base();
+    if (defined $base) {
+        # set relative paths
+        $self->install_base_relpaths(
+            'bashcomp' => 'bash-completion/completions');
+        $self->install_base_relpaths(
+            'zshcomp'  => 'zsh/site-functions');
+    }
+    else {
+        # set absolute paths
+        $self->install_path(
+            'bashcomp' => '/usr/share/bash-completion/completions');
+        $self->install_path(
+            'zshcomp'  => '/usr/share/zsh/site-functions');
+    }
+    # run super function
+    $self->SUPER::ACTION_build;
+}
+
 1;

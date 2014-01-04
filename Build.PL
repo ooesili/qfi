@@ -29,10 +29,6 @@ my $build = Builder->new (
     comp_files         => {'completion/bash.comp' => 'bashcomp/qfi',
                            'completion/zsh.comp'  => 'zshcomp/_qfi',
                           },
-    install_path =>
-        {'bashcomp' => '/usr/share/bash-completion/completions/',
-         'zshcomp'  => '/usr/share/zsh/site-functions/'
-        },
 );
 
 $build->add_build_element('comp');
