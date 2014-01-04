@@ -79,6 +79,6 @@ sub ACTION_uninstall {
     my $self = shift;
     # get path of .packlist file
     my $packlist = $self->install_map->{'write'};
-    # uninstall package
-    &ExtUtils::Install::uninstall($packlist);
+    # uninstall package, verbosely, without faking
+    &ExtUtils::Install::uninstall($packlist, 1, 0);
 }
