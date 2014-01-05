@@ -199,7 +199,7 @@ would have to type:
     vim /etc/php/php.ini
 
 After we look through the file and find the option we want to change, we
-realize that we forgot to open the file with B<sudoedit>, so we  have to close
+realize that we forgot to open the file with B<sudoedit>, so we have to close
 it and reopen it with B<sudoedit:>
 
     sudoedit /etc/php/php.ini
