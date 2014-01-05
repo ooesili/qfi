@@ -31,14 +31,19 @@ or:
 
     # ./Build install --install_base=/usr/local
 
+Alternatively, if your system installs into /usr/local by default, but you want
+it to install into /usr, you can use "--install_base=/usr".
+
 Finally, to turn on directory-switching targets, add this to your .bashrc:
 
-    source /etc/profile.d/qfi.sh
+    source /usr/share/qfi/wrapper.sh
 
 or, if you use zsh, add this to your .zshrc:
 
-    emulate sh -c 'source /etc/profile.d/qfi.sh'
+    emulate sh -c 'source /usr/share/qfi/wrapper.sh'
 
+If you installed qfi into /usr/local instead of /usr, change the above paths to
+reflect this.
 
 Uninstallation Instructions
 ---------------------------
@@ -96,11 +101,11 @@ in your bashrc:
     source $HOME/.local/share/bash-completion/completions/qfi
 
 Lastly, to turn on directory-switching targets, change the line that sources
-the profile.d script in your shell rc-file to reflect the path of your
+the wrapper script in your shell rc-file to reflect the path of your
 installation.  For bash:
 
-    source $HOME/.local/etc/profile.d/qfi.sh
+    source $HOME/.local/share/qfi/wrapper.sh
 
 or, for zsh:
 
-    emulate sh -c 'source $HOME/.local/etc/profile.d/qfi.sh'
+    emulate sh -c 'source $HOME/.local/share/qfi/wrapper.sh'

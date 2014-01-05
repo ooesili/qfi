@@ -28,7 +28,7 @@ my $build = Builder->new (
     # add install action and paths for util functions
     util_files         => {'util/bash.comp'  => 'bashcomp/qfi',
                            'util/zsh.comp'   => 'zshcomp/_qfi',
-                           'util/wrapper.sh' => 'wrapper/qfi.sh',
+                           'util/wrapper.sh' => 'share/wrapper.sh',
                           },
 );
 

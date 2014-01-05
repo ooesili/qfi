@@ -52,6 +52,9 @@ sub ACTION_docs {
 # set relative installation paths for util functions
 sub ACTION_build {
     my $self = shift;
+    # get installation prefix
+    my $dirs = $self->installdirs();
+    my $prefix = $self->_default_install_paths->{'original_prefix'}{$dirs};
     # set path based on whether install_base is specified
     my $base = $self->install_base();
     if (defined $base) {
@@ -61,16 +64,16 @@ sub ACTION_build {
         $self->install_base_relpaths(
             'zshcomp'  => 'share/zsh/site-functions');
         $self->install_base_relpaths(
-            'wrapper'  => 'etc/profile.d');
+            'share'    => 'share/qfi');
     }
     else {
         # set absolute paths
         $self->install_path(
-            'bashcomp' => '/usr/share/bash-completion/completions');
+            'bashcomp' => "$prefix/share/bash-completion/completions");
         $self->install_path(
-            'zshcomp'  => '/usr/share/zsh/site-functions');
+            'zshcomp'  => "$prefix/share/zsh/site-functions");
         $self->install_path(
-            'wrapper'  => '/etc/profile.d');
+            'share'    => "$prefix/share/qfi");
     }
     # run super function
     $self->SUPER::ACTION_build;
