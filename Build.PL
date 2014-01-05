@@ -25,11 +25,12 @@ my $build = Builder->new (
     license            => 'gpl',
     dist_version       => '0.1.0',
     create_makefile_pl => 'traditional',
-    # add install action and paths for completion functions
-    comp_files         => {'completion/bash.comp' => 'bashcomp/qfi',
-                           'completion/zsh.comp'  => 'zshcomp/_qfi',
+    # add install action and paths for util functions
+    util_files         => {'util/bash.comp'  => 'bashcomp/qfi',
+                           'util/zsh.comp'   => 'zshcomp/_qfi',
+                           'util/wrapper.sh' => 'wrapper/qfi.sh',
                           },
 );
 
-$build->add_build_element('comp');
+$build->add_build_element('util');
 $build->create_build_script;

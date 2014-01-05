@@ -30,6 +30,14 @@ or:
 
     # ./Build install --install_base=/usr/local
 
+Finally, to turn on directory-switching targets, add this to your .bashrc:
+
+    source /etc/profile.d/qfi.sh
+
+or, if you use zsh, add this to your .zshrc:
+
+    emulate sh -c 'source /etc/profile.d/qfi.sh'
+
 
 Uninstallation Instructions
 ---------------------------
@@ -81,7 +89,17 @@ initialize the completion system (i.e., near the top of your .zshrc, or in
 
     fpath=($HOME/local/share/zsh/site-functions/ $fpath)
 
-Lastly, if you want bash tab-completion, you need to source the completion file
+If you want bash tab-completion, you need to source the completion file
 in your bashrc:
 
     source $HOME/local/share/bash-completion/completions/qfi
+
+Lastly, to turn on directory-switching targets, change the line that sources
+the profile.d script in your shell rc-file to reflect the path of your
+installation.  For bash:
+
+    source $HOME/local/etc/profile.d/qfi.sh
+
+or, for zsh:
+
+    emulate sh -c 'source $HOME/local/etc/profile.d/qfi.sh'

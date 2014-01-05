@@ -61,7 +61,10 @@ sub edit {
     if (-l $link) { $file = readlink $link; }
     else { die "$0: cannot find target `$_[0]': $!\n"; }
     # see who owns it
-    if (-f $file) { $uid = (stat $file)[4]; }
+    if (-d $file) {
+        die "$0: directory-switching not enabled, see `man 1 qfi' to fix\n";
+    }
+    elsif (-f $file) { $uid = (stat $file)[4]; }
     else { die "$0: cannot stat `$file': $!\n"; }
     # pick editor
     if ($uid == 0) {

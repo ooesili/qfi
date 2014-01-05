@@ -8,9 +8,10 @@ Introduction
 --------------------
 
 `qfi` is a command line tool for UNIX-like systems, for quickly editing
-commonly used files.  This is accomplished through the use of **targets**,
-which are short aliases for files.  For a more terse explanation of how `qfi`
-works, consult the manual page.
+commonly used files, and switcihing to commonly used directories.  This is
+accomplished through the use of **targets**, which are short aliases for files
+and directories.  For a more terse explanation of how `qfi` works, consult the
+manual page.
 
 
 Description
@@ -27,20 +28,22 @@ learn than it would save.
 ### Targets
 `qfi` maintains a list of **targets** as symbolic links inside of its
 configuration directory.  To add a **target**, we call `qfi` with the `-a`
-option, the name of the **target**, and the name of the file:
+option, the name of the **target**, and the name of the file/directory:
 
 ```bash
 $ qfi -a php /etc/php/php.ini
 ```
 
-Now, whenever we want to open that file, we just call `qfi` with the name of
-the **target**:
+Now, whenever we want to open that file (or switch to that directory), we just
+call `qfi` with the name of the **target**:
 
 ```bash
 $ qfi php
 ```
 
 which will open up the given **target** using the following rules:
+
+ *  If the file is a directory, `cd` into it.
 
  *  If the file is owned by the root user, open the file with `sudoedit`.
 
@@ -57,12 +60,14 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
 `$XDG_CONFIG_HOME/qfi` will be used if `$XDG_CONFIG_HOME` is defined.
 
 ### Options
- *  The `-a` option will add a **target** pointing to the specified file:
+ *  The `-a` option will add a **target** pointing to the specified
+    file/directory:
     ```bash
     $ qfi -a <target> <filename>
     ```
 
- *  The `-m` option will move the destination of a **target** to a new file:
+ *  The `-m` option will move the destination of a **target** to a new
+    file/directory:
     ```bash
     $ qfi -m <target> <filename>
     ```
@@ -90,6 +95,14 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
 `qfi` comes with bash and zsh tab-completion support for **targets** and
 options.  For bash completion to work, additional software must be installed,
 as specified below.
+
+### Directory-Switching
+`qfi` allows targets to point to directories, in which case your shell will
+`cd` into the directory.  To properly enable this feature, view the
+instructions in the `INSTALL` file, or manual page.  This feature was largely
+inspired by [autojump](https://github.com/joelthelion/autojump), which is a
+very cool piece of software with similar functionality.
+
 
 Dependencies
 --------------------

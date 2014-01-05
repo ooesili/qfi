@@ -49,10 +49,10 @@ sub ACTION_docs {
     chdir $self->base_dir;
 };
 
-# set relative installation paths for completion functions
+# set relative installation paths for util functions
 sub ACTION_build {
     my $self = shift;
-    # set path for completions based on whether install_base is specified
+    # set path based on whether install_base is specified
     my $base = $self->install_base();
     if (defined $base) {
         # set relative paths
@@ -60,6 +60,8 @@ sub ACTION_build {
             'bashcomp' => 'share/bash-completion/completions');
         $self->install_base_relpaths(
             'zshcomp'  => 'share/zsh/site-functions');
+        $self->install_base_relpaths(
+            'wrapper'  => 'etc/profile.d');
     }
     else {
         # set absolute paths
@@ -67,6 +69,8 @@ sub ACTION_build {
             'bashcomp' => '/usr/share/bash-completion/completions');
         $self->install_path(
             'zshcomp'  => '/usr/share/zsh/site-functions');
+        $self->install_path(
+            'wrapper'  => '/etc/profile.d');
     }
     # run super function
     $self->SUPER::ACTION_build;

@@ -120,6 +120,10 @@ I<target> using the following rules:
 
 =item *
 
+If the file is a directory, B<cd> into it.
+
+=item *
+
 If the file is owned by the root user, open the file with B<sudoedit>.
 
 =item *
@@ -138,17 +142,31 @@ I<Targets> can be added and manipulated with the options specified below.
 The configuration directory defaults to B<$HOME>/.config/qfi, but
 B<$XDG_CONFIG_HOME>/qfi will be used if B<$XDG_CONFIG_HOME> is defined.
 
+=head2 Directory-Switching
+
+B<qfi> allows targets to point to directories, in which case your shell will
+B<cd> into the directory.  To properly enable this feature, add this to your
+.bashrc:
+
+    source /etc/profile.d/qfi.sh
+
+or, if you use B<zsh>, add this to your .zshrc:
+
+    emulate sh -c 'source /etc/profile.d/qfi.sh'
+
+Change the path to I<qfi.sh> if you installed B<qfi> somewhere else.
+
 =head2 Options
 
 =over
 
 =item B<-a> I<target> <filename>
 
-Add a I<target> pointing to the specified file.
+Add a I<target> pointing to the specified file/directory.
 
 =item B<-m> I<target> <filename>
 
-Move the destination of a I<target> to a new file.
+Move the destination of a I<target> to a new file/directory.
 
 =item B<-d> I<target>
 
