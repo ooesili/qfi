@@ -74,33 +74,33 @@ If you installed qfi into a non-standard path, a few things must be done to get
 full functionality.  First, you need to add the library path of the
 installation to the PERL5LIB environment variable so that Perl knows were to
 find the Qfi.pm module.  For example, if you installed qfi with
-"--destdir=$HOME/local --install_base='.'", you must set the PERL5LIB (in your
+"--destdir=$HOME/.local --install_base='.'", you must set the PERL5LIB (in your
 zsh or bashrc) to reflect this:
 
-    export PERL5LIB=$HOME/local/lib/perl5
+    export PERL5LIB=$HOME/.local/lib/perl5
 
 or, if there is already something in that variable:
 
-    export PERL5LIB=$HOME/local/lib/perl5:$PERL5LIB
+    export PERL5LIB=$HOME/.local/lib/perl5:$PERL5LIB
 
 Second, if you want zsh tab-completion, you need to add the directory
 containing the zsh completion function to your $fpath variable before you
 initialize the completion system (i.e., near the top of your .zshrc, or in
 .zshenv or .zshprofile):
 
-    fpath=($HOME/local/share/zsh/site-functions/ $fpath)
+    fpath=($HOME/.local/share/zsh/site-functions/ $fpath)
 
 If you want bash tab-completion, you need to source the completion file
 in your bashrc:
 
-    source $HOME/local/share/bash-completion/completions/qfi
+    source $HOME/.local/share/bash-completion/completions/qfi
 
 Lastly, to turn on directory-switching targets, change the line that sources
 the profile.d script in your shell rc-file to reflect the path of your
 installation.  For bash:
 
-    source $HOME/local/etc/profile.d/qfi.sh
+    source $HOME/.local/etc/profile.d/qfi.sh
 
 or, for zsh:
 
-    emulate sh -c 'source $HOME/local/etc/profile.d/qfi.sh'
+    emulate sh -c 'source $HOME/.local/etc/profile.d/qfi.sh'
