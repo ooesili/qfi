@@ -60,14 +60,22 @@ sub edit {
     $link = File::Spec->catfile($conf_dir, $_[0]);
     if (-l $link) { $file = readlink $link; }
     else { die "$0: cannot find target `$_[0]': $!\n"; }
-    # see who owns it
+    # the wrapper script should catch this condition, so it must not be loaded
     if (-d $file) {
         die "$0: directory-switching not enabled, see `man 1 qfi' to fix\n";
     }
+    # if it's a file and we can see it
     elsif (-f $file) { $uid = (stat $file)[4]; }
-    else { die "$0: cannot stat `$file': $!\n"; }
+    # if we can't see the file, use sudoedit
+    elsif ($!{'EACCES'}) { $uid = 0; }
+    # if we can access the location, but the file is not found, use the UID of
+    # the parent directory
+    else {
+        my @dirs = (File::Spec->splitpath($file))[1];
+        $uid = (stat File::Spec->catdir(@dirs))[4];
+    }
     # pick editor
-    if ($uid == 0) {
+    if ($uid != $<) {
         $editor = "sudoedit";
     }
     elsif (defined($env_editor = $ENV{'EDITOR'})) {
