@@ -23,7 +23,6 @@ my $build = Builder->new (
     dist_author        => 'Wesley Merkel <ooesili@gmail.com>',
     dist_abstract      => 'quickly edit commonly used files',
     license            => 'gpl',
-    dist_version       => '0.1.0',
     create_makefile_pl => 'traditional',
     # add install action and paths for util functions
     util_files         => {'util/bash.comp'  => 'bashcomp/qfi',
