@@ -39,56 +39,60 @@ sub main::VERSION_MESSAGE {
 $0 = basename $0; # remove path from program name
 
 # simple error reporting function
-sub err {
-    warn $_[0] if exists $_[0];
+sub usage {
+    my $mesg = shift;
+    warn "$0: $mesg\n" if defined $mesg;
     &main::HELP_MESSAGE;
-    exit(2);
+    exit(1);
 }
 
 # parse command line options and take action
 my %opts;
-getopts('adlmr', \%opts) or &err;
+getopts('adlmr', \%opts) or &usage;
 
 # test for number of arguments and options, then call command
-&err("$0: too many options\n")		if keys %opts > 1;
+&usage("too many options")			if keys %opts > 1;
+
+# initialize Qfi
+&Qfi::init or exit(2);
 
 # add
 if (exists $opts{'a'}) {
-    &err("$0: no target specified\n")		if @ARGV < 1;
-    &err("$0: no file specified\n")		if @ARGV < 2;
-    &err("$0: too many arguments\n")		if @ARGV > 2;
-    &Qfi::add($ARGV[0], $ARGV[1]);
+    &usage("no target specified")		if @ARGV < 1;
+    &usage("no file specified")			if @ARGV < 2;
+    &usage("too many arguments")		if @ARGV > 2;
+    &Qfi::add($ARGV[0], $ARGV[1]) or exit(1);
 }
 # delete
 elsif (exists $opts{'d'}) {
-    &err("$0: no target specified\n")		if @ARGV < 1;
-    &err("$0: too many arguments\n")		if @ARGV > 1;
-    &Qfi::delete($ARGV[0]);
+    &usage("no target specified")		if @ARGV < 1;
+    &usage("too many arguments")		if @ARGV > 1;
+    &Qfi::delete($ARGV[0]) or exit(1);
 }
 # list
 elsif (exists $opts{'l'}) {
-    &err("$0: too many arguments\n")		if @ARGV > 1;
-    &Qfi::list($ARGV[0]);
+    &usage("too many arguments")		if @ARGV > 1;
+    &Qfi::list($ARGV[0]) or exit(1);
 }
 # move
 elsif (exists $opts{'m'}) {
-    &err("$0: no target specified\n")		if @ARGV < 1;
-    &err("$0: no file specified\n")		if @ARGV < 2;
-    &err("$0: too many arguments\n")		if @ARGV > 2;
-    &Qfi::move($ARGV[0], $ARGV[1]);
+    &usage("no target specified")		if @ARGV < 1;
+    &usage("no file specified")			if @ARGV < 2;
+    &usage("too many arguments")		if @ARGV > 2;
+    &Qfi::move($ARGV[0], $ARGV[1]) or exit(1);
 }
 # rename
 elsif (exists $opts{'r'}) {
-    &err("$0: no target specified\n")		if @ARGV < 1;
-    &err("$0: new name not specified\n"	)	if @ARGV < 2;
-    &err("$0: too many arguments\n")		if @ARGV > 2;
-    &Qfi::rename($ARGV[0], $ARGV[1]);
+    &usage("no target specified")		if @ARGV < 1;
+    &usage("new name not specified")		if @ARGV < 2;
+    &usage("too many arguments")		if @ARGV > 2;
+    &Qfi::rename($ARGV[0], $ARGV[1]) or exit(1);
 }
 # edit
 else {
-    &err("$0: no target specified\n")		if @ARGV < 1;
-    &err("$0: too many arguments\n")		if @ARGV > 1;
-    &Qfi::edit($ARGV[0])
+    &usage("no target specified")		if @ARGV < 1;
+    &usage("too many arguments")		if @ARGV > 1;
+    &Qfi::edit($ARGV[0]) or exit(1);
 }
 __END__
 =head1 NAME
