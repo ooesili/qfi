@@ -65,9 +65,8 @@ if (exists $opts{'a'}) {
 }
 # delete
 elsif (exists $opts{'d'}) {
-    &usage("no target specified")		if @ARGV < 1;
-    &usage("too many arguments")		if @ARGV > 1;
-    &Qfi::delete($ARGV[0]) or exit(1);
+    &usage("no targets specified")		if @ARGV < 1;
+    &Qfi::delete_all(@ARGV) or exit(1);
 }
 # list
 elsif (exists $opts{'l'}) {

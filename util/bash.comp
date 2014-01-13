@@ -33,7 +33,7 @@ _qfi() {
         # complete based on options
         case ${COMP_WORDS[1]} in
             -d)
-                if [[ ${COMP_CWORD} -eq 2 ]]; then
+                if [[ ${COMP_CWORD} -ge 2 ]]; then
                     _qfi_targets $cur
                 fi
                 ;;

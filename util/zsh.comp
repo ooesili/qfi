@@ -18,7 +18,7 @@ _qfi_new_target() {
 # command for each action
 _qfi_cmd_delete() {
     _arguments -s : \
-        '2: :_qfi_targets'
+        '*: :_qfi_targets'
 }
 _qfi_cmd_rename() {
     _arguments -s : \

@@ -123,6 +123,30 @@ sub delete {
     else { &fwarn("error removing target `$_[0]': $!"); }
 }
 
+# delete all specified targets
+sub delete_all {
+    my @targets = @_;
+    my $all_worked = 1;
+    my $all_exist = 1;
+    # see ifa ll targets exist
+    for (@targets) {
+        if (not -l &target_link($_)) {
+            &fwarn("target `$_` does not exist");
+            $all_exist = 0;
+        }
+    }
+    # try to delete all targets
+    if ($all_exist) {
+        for (@targets) { $all_worked &&= &delete($_); }
+        # print message if some failed, and more than one was specified
+        if (@targets > 1 and not $all_worked) {
+            &fwarn("not all targets removed");
+        }
+        else { return 1; }
+    }
+    else { &fwarn("no targets removed"); }
+}
+
 # first arg is target; edit file pointed to by the target
 sub edit {
     my $target = shift;
