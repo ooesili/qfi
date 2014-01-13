@@ -72,20 +72,20 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
     $ qfi -m <target> <filename>
     ```
 
- *  The `-d` option will delete a **target**:
+ *  The `-d` option will delete the listed **targets**:
     ```bash
-    $ qfi -d <target>
+    $ qfi -d <target1> [<target2> [...]]
+    ```
+
+ *  The `-r` option will rename a **target**:
+    ```bash
+    $ qfi -r <target> <newname>
     ```
 
  *  The `-l` option will list all **targets**, or where the specified
     **target** points to, if one was given:
     ```bash
     $ qfi -l [target]
-    ```
-
- *  The `-r` option will rename a **target**:
-    ```bash
-    $ qfi -r <target> <newname>
     ```
 
  *  The `--help` and `--version` options will display usage and version

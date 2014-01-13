@@ -27,8 +27,9 @@ use Qfi;
 # usage and version
 $Getopt::Std::STANDARD_HELP_VERSION = 1;
 sub main::HELP_MESSAGE {
-    print "Usage: $0 [-d] TARGET\n";
+    print "Usage: $0 TARGET\n";
     print "       $0 [-a|-m] TARGET FILENAME\n";
+    print "       $0 -d TARGET1 [TARGET2 [...]]\n";
     print "       $0 -r TARGET NEWNAME\n";
     print "       $0 -l [TARGET]\n";
 }
@@ -100,9 +101,11 @@ qfi - quicky edit commonly used files
 
 =head1 SYNOPSIS
 
-qfi [B<-d>] I<target>
+qfi I<target>
 
-qfi [B<-d>|B<-m>] I<target> <filename>
+qfi [B<-a>|B<-m>] I<target> <filename>
+
+qfi B<-d> I<target1> [I<target2> [...]]
 
 qfi B<-r> I<target> I<newname>
 
@@ -171,18 +174,18 @@ Add a I<target> pointing to the specified file/directory.
 
 Move the destination of a I<target> to a new file/directory.
 
-=item B<-d> I<target>
+=item B<-d> I<target1> [I<target2> [...]]
 
-Delete a I<target>.
+Delete I<targets>.
+
+=item B<-r> I<target> I<newname>
+
+Rename a I<target>.
 
 =item B<-l> [I<target>]
 
 List all I<targets>, or where the specified I<target> points to, if one was
 given.
-
-=item B<-r> I<target> I<newname>
-
-Rename a I<target>.
 
 =item B<--help>
 
