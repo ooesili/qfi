@@ -1,0 +1,38 @@
+function __fish_complete_qfi_target
+    set cmd (commandline -opc)
+    # only argument
+    if [ (count $cmd) -eq 1 ]
+        return 0
+    end
+    # delete can take multiple targets
+    if [ $cmd[2] = '-d' ]
+        return 0
+    end
+    # complete target once
+    if [ (count $cmd) -eq 2 ]
+        if contains -- $cmd[2] -l -m -r
+            return 0
+        end
+    end
+    return 1
+end
+
+function __fish_complete_qfi_firstopt
+    set cmd (commandline -opc)
+    if [ (count $cmd) -eq 1 ]
+        return 0
+    end
+    return 1
+end
+
+# complete a target
+complete -c qfi -f -n __fish_complete_qfi_target -a '(qfi -l)' -d 'target'
+
+# complete options
+complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'help'    -d 'display help'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'version' -d 'display version'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -s 'a'       -d 'add target'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -s 'd'       -d 'delete target'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -s 'l'       -d 'list targets'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -s 'm'       -d 'move target'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -s 'r'       -d 'rename target'

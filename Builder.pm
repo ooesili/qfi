@@ -64,6 +64,8 @@ sub ACTION_build {
         $self->install_base_relpaths(
             'zshcomp'  => 'share/zsh/site-functions');
         $self->install_base_relpaths(
+            'fishcomp' => 'share/fish/completions');
+        $self->install_base_relpaths(
             'share'    => 'share/qfi');
     }
     else {
@@ -72,6 +74,8 @@ sub ACTION_build {
             'bashcomp' => "$prefix/share/bash-completion/completions");
         $self->install_path(
             'zshcomp'  => "$prefix/share/zsh/site-functions");
+        $self->install_path(
+            'fishcomp' => "$prefix/share/fish/completions");
         $self->install_path(
             'share'    => "$prefix/share/qfi");
     }
