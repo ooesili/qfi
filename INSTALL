@@ -38,9 +38,13 @@ Finally, to turn on directory-switching targets, add this to your .bashrc:
 
     source /usr/share/qfi/wrapper.sh
 
-or, if you use zsh, add this to your .zshrc:
+if you use zsh, add this to your .zshrc:
 
     emulate sh -c 'source /usr/share/qfi/wrapper.sh'
+
+or, if you use fish, add this to your config.fish
+
+    source /usr/share/qfi/wrapper.fish
 
 If you installed qfi into /usr/local instead of /usr, change the above paths to
 reflect this.
@@ -100,12 +104,21 @@ in your bashrc:
 
     source $HOME/.local/share/bash-completion/completions/qfi
 
+If you want fish tab-completion, you need to source the completion file
+in your fish.config:
+
+    source $HOME/.local/share/fish/completions/qfi.fish
+
 Lastly, to turn on directory-switching targets, change the line that sources
 the wrapper script in your shell rc-file to reflect the path of your
 installation.  For bash:
 
     source $HOME/.local/share/qfi/wrapper.sh
 
-or, for zsh:
+for zsh:
 
     emulate sh -c 'source $HOME/.local/share/qfi/wrapper.sh'
+
+or, for fish:
+
+    source $HOME/.local/share/qfi/wrapper.fish

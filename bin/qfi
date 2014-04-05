@@ -156,11 +156,15 @@ B<cd> into the directory.  To properly enable this feature, add this to your
 
     source /usr/share/qfi/wrapper.sh
 
-or, if you use B<zsh>, add this to your .zshrc:
+if you use B<zsh>, add this to your .zshrc:
 
     emulate sh -c 'source /usr/share/qfi/wrapper.sh'
 
-Change the path to I<wrapper.sh> if you installed B<qfi> somewhere else.
+or, if you use B<fish>, add this to your config.fish
+
+    source /usr/share/qfi/wrapper.fish
+
+Change the path to the wrapper if you installed B<qfi> somewhere else.
 
 =head2 Options
 

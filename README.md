@@ -92,7 +92,7 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
     information, respectively.
 
 ### Tab-Completion
-`qfi` comes with bash and zsh tab-completion support for **targets** and
+`qfi` comes with bash, zsh, and fish tab-completion support for **targets** and
 options.  For bash completion to work, additional software must be installed,
 as specified below.
 
