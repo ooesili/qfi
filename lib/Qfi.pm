@@ -29,7 +29,7 @@ use File::Spec;
 BEGIN {
     require Exporter;
 
-    our $VERSION = "v0.2.0";
+    our $VERSION = "v0.3.1";
     our @ISA = qw(Exporter);
     #our @EXPORT = qw(add delete edit list move rename conf_dir);
     #our @EXPORT_OK = qw();
