@@ -25,10 +25,11 @@ my $build = Builder->new (
     license            => 'gpl',
     create_makefile_pl => 'traditional',
     # add install action and paths for util functions
-    util_files         => {'util/bash.comp'  => 'bashcomp/qfi',
-                           'util/zsh.comp'   => 'zshcomp/_qfi',
-                           'util/fish.comp'  => 'fishcomp/qfi.fish',
-                           'util/wrapper.sh' => 'share/wrapper.sh',
+    util_files         => {'util/bash.comp'    => 'bashcomp/qfi',
+                           'util/zsh.comp'     => 'zshcomp/_qfi',
+                           'util/fish.comp'    => 'fishcomp/qfi.fish',
+                           'util/wrapper.fish' => 'share/wrapper.fish',
+                           'util/wrapper.sh'   => 'share/wrapper.sh',
                           },
 );
 
