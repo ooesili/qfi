@@ -36,3 +36,4 @@ complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'd'       -d 'delete targe
 complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'l'       -d 'list targets'
 complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'm'       -d 'move target'
 complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'r'       -d 'rename target'
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 's'       -d 'show target desinations'

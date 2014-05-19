@@ -32,6 +32,7 @@ sub main::HELP_MESSAGE {
     print "       $0 -d TARGET1 [TARGET2 [...]]\n";
     print "       $0 -r TARGET NEWNAME\n";
     print "       $0 -l [TARGET]\n";
+    print "       $0 -s\n";
 }
 sub main::VERSION_MESSAGE {
     print "qfi $Qfi::VERSION\n";
@@ -49,7 +50,7 @@ sub usage {
 
 # parse command line options and take action
 my %opts;
-getopts('adlmr', \%opts) or &usage;
+getopts('adlmrs', \%opts) or &usage;
 
 # test for number of arguments and options, then call command
 &usage("too many options")			if keys %opts > 1;
@@ -87,6 +88,11 @@ elsif (exists $opts{'r'}) {
     &usage("new name not specified")		if @ARGV < 2;
     &usage("too many arguments")		if @ARGV > 2;
     &Qfi::rename($ARGV[0], $ARGV[1]) or exit(1);
+}
+# show
+elsif (exists $opts{'s'}) {
+    &usage("too many arguments")		if @ARGV != 0;
+    &Qfi::show($ARGV[0], $ARGV[1]) or exit(1);
 }
 # edit
 else {
@@ -190,6 +196,10 @@ Rename a I<target>.
 
 List all I<targets>, or where the specified I<target> points to, if one was
 given.
+
+=item B<-s>
+
+Show all targets, and to where they point.
 
 =item B<--help>
 

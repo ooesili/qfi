@@ -224,4 +224,23 @@ sub move {
     &delete($target) and &add($target, $dest);
 }
 
+# show targets, and to where they point
+sub show {
+    my @files = glob &target_link("*");
+    my %links;
+    my $width = 0;
+    # read links and find first column width
+    for (@files) {
+        my $target = basename($_);
+        my $this_width = length $target;
+        $width = $this_width if $this_width > $width;
+        $links{$target} = readlink $_;
+    }
+    # print what we found
+    for (sort keys %links) {
+        printf "%-${width}s -> %s\n", $_, $links{$_};
+    }
+    return 1;
+}
+
 1; # report a successful import

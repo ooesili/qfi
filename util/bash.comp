@@ -8,7 +8,7 @@ _qfi_targets() {
 # complete options
 _qfi_opts() {
     local opts
-    opts="-a -d -l -m -r --help --version"
+    opts="-a -d -l -m -r -s --help --version"
     COMPREPLY=( $(compgen -W "${opts}" -- $1) )
 }
 
@@ -62,6 +62,9 @@ _qfi() {
                 elif [[ ${COMP_CWORD} -eq 3 ]]; then
                     _qfi_none
                 fi
+                ;;
+            -s)
+                _qfi_none
                 ;;
         esac
     fi

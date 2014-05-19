@@ -88,6 +88,11 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
     $ qfi -l [target]
     ```
 
+ *  The `-s` option will show all **targets**, and to where they point.
+    ```bash
+    $ qfi -s
+    ```
+
  *  The `--help` and `--version` options will display usage and version
     information, respectively.
 
