@@ -94,6 +94,18 @@ sub invalid_target_name {
     else { return 0; }
 }
 
+# parse $LS_COLORS
+sub get_colors {
+    my %colors;
+    if (exists $ENV{"LS_COLORS"}) {
+        for (split /:/, $ENV{"LS_COLORS"}) {
+            my ($type, $codes) = split /=/;
+            $colors{$type} = $codes;
+        }
+    }
+    return \%colors;
+}
+
 
 ##### MAIN FUNCTIONS #####
 # first arg is name, second is the file; symlink the file to the name
@@ -224,21 +236,47 @@ sub move {
     &delete($target) and &add($target, $dest);
 }
 
-# show targets, and to where they point
-sub show {
+# show status and destination for each target
+sub status {
     my @files = glob &target_link("*");
-    my %links;
+    my (%links, %colors);
     my $width = 0;
     # read links and find first column width
     for (@files) {
         my $target = basename($_);
         my $this_width = length $target;
         $width = $this_width if $this_width > $width;
-        $links{$target} = readlink $_;
+        # format string
+        my $dest = readlink $_;
+        # add / to directories
+        if (-d $dest)     { $dest .= '/'; }
+        # change arrow style and colors for file type
+        if (-d $dest)  {
+            $dest = '/> ' . $dest;
+            $colors{$target} = "\e[0;34m";
+        }
+        elsif (!-e $dest) {
+            $dest = '!> ' . $dest;
+            $colors{$target} = "\e[0;31m";
+        }
+        elsif ((stat $dest)[4] == 0) {
+            $dest = '#> ' . $dest;
+            $colors{$target} = "\e[0;33m";
+        }
+        else {
+            $dest = '-> ' . $dest;
+            $colors{$target} = "\e[0;32m";
+        }
+        $links{$target} = $dest;
     }
     # print what we found
     for (sort keys %links) {
-        printf "%-${width}s -> %s\n", $_, $links{$_};
+        if (-t STDOUT) {
+            printf "$colors{$_}%-${width}s $links{$_}\e[0m\n", $_;
+        }
+        else {
+            printf "%-${width}s %s\n", $_, $links{$_};
+        }
     }
     return 1;
 }

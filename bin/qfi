@@ -89,10 +89,10 @@ elsif (exists $opts{'r'}) {
     &usage("too many arguments")		if @ARGV > 2;
     &Qfi::rename($ARGV[0], $ARGV[1]) or exit(1);
 }
-# show
+# status
 elsif (exists $opts{'s'}) {
     &usage("too many arguments")		if @ARGV != 0;
-    &Qfi::show($ARGV[0], $ARGV[1]) or exit(1);
+    &Qfi::status($ARGV[0], $ARGV[1]) or exit(1);
 }
 # edit
 else {
@@ -199,7 +199,19 @@ given.
 
 =item B<-s>
 
-Show all targets, and to where they point.
+Show the status and destination of each I<target>.  Listings are in the
+following format:
+
+    target ?> /path/to/destination
+
+where `?>' is one of the following:
+
+    Symbol | Meaning
+    ------ | ---------------
+    ->     | normal file
+    />     | directory
+    #>     | root-owned file
+    !>     | file not found
 
 =item B<--help>
 

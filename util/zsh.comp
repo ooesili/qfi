@@ -51,7 +51,7 @@ _qfi() {
         '-m[move target]:*: :_qfi_cmd_move' \
         '-r[rename target]:*: :_qfi_cmd_rename' \
         '-l[list targets]:*: :_qfi_cmd_list' \
-        '-s[show target destinations]:*: :_qfi_none' \
+        '-s[show status]:*: :_qfi_none' \
         '--help[display help]:*: :_qfi_none' \
         '--version[display version]:*: :_qfi_none' \
         '(-): :_qfi_targets'

@@ -88,10 +88,22 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
     $ qfi -l [target]
     ```
 
- *  The `-s` option will show all **targets**, and to where they point.
+ *  The `-s` option will show the status and destination of each **target**.
     ```bash
     $ qfi -s
     ```
+    Listings are in the following format:
+    ```
+    target ?> /path/to/destination
+    ```
+    where `?>` is one of the following:
+
+    Symbol | Meaning
+    ------ | ---------------
+    `->`   | normal file
+    `/>`   | directory
+    `#>`   | root-owned file
+    `!>`   | file not found
 
  *  The `--help` and `--version` options will display usage and version
     information, respectively.
