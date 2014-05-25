@@ -62,7 +62,7 @@ sub init {
             else             { &fwarn("error creating `$file': $mesg"); }
         }
         # throw error if we couldn't create $conf_dir
-        return 0 if @$err;
+        return not @$err;
     }
     else { return 1; }
 }
