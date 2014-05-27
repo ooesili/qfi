@@ -45,13 +45,13 @@ which will open up the given **target** using the following rules:
 
  *  If the file is a directory, `cd` into it.
 
- *  If the file is owned by the root user, open the file with `sudoedit`.
+ *  If the file is writable by you, open it with the program specified in the
+    `$EDITOR` environment variable, or `vi` if `$EDITOR` is not defined.
 
- *  If the file is owned by you, open it with the program specified in the
-    `$EDITOR` environment variable.
+ *  If the file is not writable by you, open the file with `sudoedit`.
 
- *  If the file is owned by you, but `$EDITOR` is not defined, fall back to
-    `vi`.
+ *  If the file does not exist, use the longest existing part of it's path, and
+    the rules above, to determine which program to use.
 
 So in this case, the file will be opened with `sudoedit`.
 
@@ -96,14 +96,18 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
     ```
     target ?> /path/to/destination
     ```
-    where `?>` is one of the following:
+    where the line's color and `?>' are one of the following:
 
-    Symbol | Meaning
-    ------ | ---------------
-    `->`   | normal file
-    `/>`   | directory
-    `#>`   | root-owned file
-    `!>`   | file not found
+    Symbol | Meaning           | Color
+    ------ | ----------------- | ------
+    ->     | writable file     | green
+    />     | directory         | blue
+    #>     | non-writable file | orange
+
+    Red lines indicate a non-existent or non-accessible file, or a non chdir-able
+    directory.  These files may still be used, but you may encounter problems
+    saving them if their parent directories do not exist.
+
 
  *  The `--help` and `--version` options will display usage and version
     information, respectively.
@@ -128,10 +132,10 @@ Dependencies
 `qfi` depends on Perl, as it is written the language.
 
 #### sudo
-`qfi` depends on `sudoedit` to open files owned by the root user.  In the
-future, I *could* make this an optional dependency and just open the file with
-the normal editor if `sudoedit` couldn't be found.  Tell me if you would like
-this feature.
+`qfi` depends on `sudoedit` to open files owned by other users.  In the future,
+I *could* make this an optional dependency and just open the file with the
+normal editor if `sudoedit` couldn't be found.  Tell me if you would like this
+feature.
 
 #### bash-completion
 This one is optional.  `qfi` can provide bash tab-completion support for

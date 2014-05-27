@@ -136,16 +136,17 @@ If the file is a directory, B<cd> into it.
 
 =item *
 
-If the file is owned by the root user, open the file with B<sudoedit>.
+If the file is writable by you, open it with the program specified in the
+B<$EDITOR> environment variable, or B<vi> if B<$EDITOR> is not defined.
 
 =item *
 
-If the file is owned by you, open it with the program specified in the
-B<$EDITOR> environment variable.
+If the file is not writable by you, open the file with B<sudoedit>.
 
 =item *
 
-If the file is owned by you, but B<$EDITOR> is not defined, fall back to vi.
+If the file does not exist, use the longest existing part of it's path, and the
+rules above, to determine which program to use.
 
 =back
 
@@ -204,14 +205,17 @@ following format:
 
     target ?> /path/to/destination
 
-where `?>' is one of the following:
+where the line's color and `?>' are one of the following:
 
-    Symbol | Meaning
-    ------ | ---------------
-    ->     | normal file
-    />     | directory
-    #>     | root-owned file
-    !>     | file not found
+    Symbol | Meaning           | Color
+    ------ | ----------------- | ------
+    ->     | writable file     | green
+    />     | directory         | blue
+    #>     | non-writable file | orange
+
+Red lines indicate a non-existent or non-accessible file, or a non chdir-able
+directory.  These files may still be used, but you may encounter problems
+saving them if their parent directories do not exist.
 
 =item B<--help>
 
@@ -246,7 +250,7 @@ B<qfi> with the I<target> name:
 
     qfi php
 
-which will open the file B<sudoedit>, because it is owned by the root user.
+which will open the file B<sudoedit>, because it is not writable by us.
 
 =head1 SEE ALSO
 

@@ -106,6 +106,29 @@ sub get_colors {
     return \%colors;
 }
 
+# see if file is writable, or if we can make new one
+# without becoming someone else
+sub writable {
+    my $file = shift;
+    # writable
+    if (-w $file)    { return 1; }
+    # exists, but not writable
+    elsif (-e $file) { return 0; }
+    # does not exist, but the location can be seen
+    elsif (not $!{'EACCES'})  {
+        my $old_path = $file;
+        my $path = dirname $file;
+        # find the longest existing path and use it's writability
+        while ($path ne $old_path) {
+            if (-e $path) { return (-w $path); }
+            else          { $path = dirname $path; }
+        }
+        return &fwarn("error parsing path: `$file'");
+    }
+    # access error; we must become someone else
+    else { return 0; }
+}
+
 
 ##### MAIN FUNCTIONS #####
 # first arg is name, second is the file; symlink the file to the name
@@ -162,29 +185,15 @@ sub delete_all {
 # first arg is target; edit file pointed to by the target
 sub edit {
     my $target = shift;
-    my ($env_editor, $editor, $file, $uid);
+    my ($env_editor, $editor, $file);
     # get the destination of the target
     $file = &get_target_dest($target) or return 0;
     # the wrapper script should catch this condition, so it must not be loaded
     if (-d $file) {
         return &fwarn( "directory-switching not enabled, see `man 1 qfi'");
     }
-    # if it's a file and we can see it
-    elsif (-f $file) { $uid = (stat $file)[4]; }
-    # if we can't see the file, use sudoedit
-    elsif ($!{'EACCES'}) { $uid = 0; }
-    # if we can access the location, but the file is not found, use the UID of
-    # the parent directory
-    else {
-        my @dirs = (File::Spec->splitpath($file))[1];
-        $uid = (stat File::Spec->catdir(@dirs))[4];
-        # warn and return false if stat failed
-        if (not defined $uid) {
-            return &fwarn("cannot stat parent dir of `$file'");
-        }
-    }
     # pick editor
-    if ($uid != $<)                      { $editor = "sudoedit"; }
+    if (not &writable($file))            { $editor = "sudoedit"; }
     elsif ($env_editor = $ENV{'EDITOR'}) { $editor = $env_editor; }
     else                                 { $editor = "vi"; }
     # run editor
@@ -251,23 +260,24 @@ sub status {
         # add / to directories
         if (-d $dest)     { $dest .= '/'; }
         # change arrow style and colors for file type
+        my $arrow;
         if (-d $dest)  {
-            $dest = '/> ' . $dest;
+            $arrow = '/>';
             $colors{$target} = "\e[0;34m";
         }
-        elsif (!-e $dest) {
-            $dest = '!> ' . $dest;
-            $colors{$target} = "\e[0;31m";
-        }
-        elsif ((stat $dest)[4] == 0) {
-            $dest = '#> ' . $dest;
-            $colors{$target} = "\e[0;33m";
-        }
-        else {
-            $dest = '-> ' . $dest;
+        elsif (&writable($dest)) {
+            $arrow = '->';
             $colors{$target} = "\e[0;32m";
         }
-        $links{$target} = $dest;
+        else {
+            $arrow = '#>';
+            $colors{$target} = "\e[0;33m";
+        }
+        # make non-existent files and non chdir-able directories red
+        if ((!-e $dest) or (-d $dest and !-x $dest)) {
+            $colors{$target} = "\e[0;31m";
+        }
+        $links{$target} = $arrow . ' ' . $dest;
     }
     # print what we found
     for (sort keys %links) {
