@@ -8,7 +8,7 @@ Introduction
 --------------------
 
 `qfi` is a command line tool for UNIX-like systems, for quickly editing
-commonly used files, and switcihing to commonly used directories.  This is
+commonly used files, and switching to commonly used directories.  This is
 accomplished through the use of **targets**, which are short aliases for files
 and directories.  For a more terse explanation of how `qfi` works, consult the
 manual page.
@@ -121,8 +121,8 @@ as specified below.
 `qfi` allows targets to point to directories, in which case your shell will
 `cd` into the directory.  To properly enable this feature, view the
 instructions in the `INSTALL` file, or manual page.  This feature was largely
-inspired by [autojump](https://github.com/joelthelion/autojump), which is a
-very cool piece of software with similar functionality.
+inspired by [autojump][1], which is a very cool piece of software with similar
+functionality.
 
 
 Dependencies
@@ -139,11 +139,14 @@ feature.
 
 #### bash-completion
 This one is optional.  `qfi` can provide bash tab-completion support for
-**targets** and options if the
-[bash-completion](http://bash-completion.alioth.debian.org/) software is
-installed.
+**targets** and options if the [bash-completion][2] software is installed.
 
 Distribution Packages
 ---------------------
 
- *  Arch Linux: [qfi](https://aur.archlinux.org/packages/qfi/) (AUR)
+ *  Arch Linux: [qfi][3] (AUR)
+
+
+[1]: https://github.com/joelthelion/autojump
+[2]: http://bash-completion.alioth.debian.org/
+[3]: https://aur.archlinux.org/packages/qfi/
