@@ -12,7 +12,7 @@ qfi() {
         if [[ -d $dest ]]; then
             # change directories and don't run normally
             normal_run=false
-            cd $dest
+            cd "$dest"
         fi
     fi
 
