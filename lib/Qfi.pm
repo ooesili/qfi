@@ -129,6 +129,23 @@ sub writable {
     else { return 0; }
 }
 
+# return list of all links in configuration directory
+sub all_links {
+    my @links;
+    if (opendir my $dh, $conf_dir) {
+        while (readdir($dh)) {
+            my $file = File::Spec->catfile($conf_dir, $_);
+            # skip '.' and '..'
+            unless (/^(:?\.|\.\.)$/) {
+                if (-l $file) { push @links, $file; }
+                else { &fwarn("non-link in config directory: `$file'"); }
+            }
+        }
+    }
+    else { &fwarn("error opening directory: `$conf_dir'"); }
+    return @links;
+}
+
 
 ##### MAIN FUNCTIONS #####
 # first arg is name, second is the file; symlink the file to the name
@@ -210,8 +227,7 @@ sub list {
     }
     # otherwise print all of the targets
     else {
-        my @files = glob &target_link("*");
-        for (sort @files) {
+        for (sort &all_links) {
             $target = fileparse($_);
             printf "$target\n";
         }
@@ -247,11 +263,10 @@ sub move {
 
 # show status and destination for each target
 sub status {
-    my @files = glob &target_link("*");
     my (%links, %colors);
     my $width = 0;
     # read links and find first column width
-    for (@files) {
+    for (sort &all_links) {
         my $target = basename($_);
         my $this_width = length $target;
         $width = $this_width if $this_width > $width;
