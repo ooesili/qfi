@@ -9,7 +9,7 @@ function qfi
     if [ (count $argv) -eq 1 ]
         if echo $argv[1] | grep -qv '^-'
             # cd if the target destination is a directory
-            set dest (eval $qfi_bin -l $argv[1] ^&-)
+            set dest (eval $qfi_bin -l $argv[1] ^/dev/null)
             if test -d "$dest"
                 # change directories and don't run normally
                 set normal_run false

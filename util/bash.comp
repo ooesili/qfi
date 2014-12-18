@@ -1,7 +1,7 @@
 # complete targets
 _qfi_targets() {
     local targets
-    targets=$(qfi -l | tr '\n' ' ')
+    targets=$(qfi -l 2>/dev/null | tr '\n' ' ')
     COMPREPLY=( $(compgen -W "${targets}" -- $1) )
 }
 

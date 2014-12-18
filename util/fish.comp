@@ -26,7 +26,7 @@ function __fish_complete_qfi_firstopt
 end
 
 # complete a target
-complete -c qfi -f -n __fish_complete_qfi_target -a '(qfi -l)' -d 'target'
+complete -c qfi -f -n __fish_complete_qfi_target -a '(qfi -l ^/dev/null)' -d 'target'
 
 # complete options
 complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'help'    -d 'display help'
