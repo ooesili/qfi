@@ -8,6 +8,7 @@ function qfi
     # cd to home directory if no arguments are given
     if [ (count $argv) -eq 0 ]
         cd
+        set normal_run false
     # see if the only argument points to a directory
     else if [ (count $argv) -eq 1 ]
         if echo $argv[1] | grep -qv '^-'

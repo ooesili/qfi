@@ -6,8 +6,9 @@ qfi() {
     local qfi_bin=$(/usr/bin/env which qfi)
 
     # cd to home directory if no arguments are given
-    if [[ $# -eq 1 ]]
+    if [[ $# -eq 0 ]]; then
         cd
+        normal_run=false
     # see if the only argument points to a directory
     elif [[ $# -eq 1 && $1 != -* ]]; then
         # cd if the target destination is a directory
