@@ -5,8 +5,11 @@ qfi() {
     # find path of real qfi command
     local qfi_bin=$(/usr/bin/env which qfi)
 
+    # cd to home directory if no arguments are given
+    if [[ $# -eq 1 ]]
+        cd
     # see if the only argument points to a directory
-    if [[ $# -eq 1 && $1 != -* ]]; then
+    elif [[ $# -eq 1 && $1 != -* ]]; then
         # cd if the target destination is a directory
         dest=$($qfi_bin -l $1 2> /dev/null)
         if [[ -d $dest ]]; then

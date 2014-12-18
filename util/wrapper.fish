@@ -5,8 +5,11 @@ function qfi
     # find path of real qfi command
     set -l qfi_bin (/usr/bin/env which qfi)
 
+    # cd to home directory if no arguments are given
+    if [ (count $argv) -eq 0 ]
+        cd
     # see if the only argument points to a directory
-    if [ (count $argv) -eq 1 ]
+    else if [ (count $argv) -eq 1 ]
         if echo $argv[1] | grep -qv '^-'
             # cd if the target destination is a directory
             set dest (eval $qfi_bin -l $argv[1] ^&-)
