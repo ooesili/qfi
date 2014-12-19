@@ -1,15 +1,14 @@
 # complete targets
 _qfi_targets() {
-    local targets
-    targets=$(qfi -l 2>/dev/null | tr '\n' ' ')
-    COMPREPLY=( $(compgen -W "${targets}" -- $1) )
+    local IFS=$'\n'
+    COMPREPLY=( $(compgen -W "$(qfi -l 2>/dev/null)" -- "$1") )
 }
 
 # complete options
 _qfi_opts() {
     local opts
     opts="-a -d -l -m -r -s --help --version"
-    COMPREPLY=( $(compgen -W "${opts}" -- $1) )
+    COMPREPLY=( $(compgen -W "$opts" -- "$1") )
 }
 
 # complete nothing
@@ -22,44 +21,44 @@ _qfi() {
     local cur
     COMPREPLY=()
     _get_comp_words_by_ref cur
-    if [[ ${COMP_CWORD} -eq 1 ]]; then
+    if [[ $COMP_CWORD -eq 1 ]]; then
         # complete options or targets
-        if [[ ${cur} == -* ]] ; then
-            _qfi_opts $cur
+        if [[ "$cur" == -* ]] ; then
+            _qfi_opts "$cur"
         else
-            _qfi_targets $cur
+            _qfi_targets "$cur"
         fi
     else
         # complete based on options
-        case ${COMP_WORDS[1]} in
+        case "${COMP_WORDS[1]}" in
             -d)
-                if [[ ${COMP_CWORD} -ge 2 ]]; then
-                    _qfi_targets $cur
+                if [[ $COMP_CWORD -ge 2 ]]; then
+                    _qfi_targets "$cur"
                 fi
                 ;;
             -a)
-                if [[ ${COMP_CWORD} -eq 2 ]]; then
+                if [[ $COMP_CWORD -eq 2 ]]; then
                     _qfi_none
-                elif [[ ${COMP_CWORD} -eq 3 ]]; then
+                elif [[ $COMP_CWORD -eq 3 ]]; then
                     _filedir
                 fi
                 ;;
             -l)
-                if [[ ${COMP_CWORD} -eq 2 ]]; then
-                    _qfi_targets $cur
+                if [[ $COMP_CWORD -eq 2 ]]; then
+                    _qfi_targets "$cur"
                 fi
                 ;;
             -m)
-                if [[ ${COMP_CWORD} -eq 2 ]]; then
-                    _qfi_targets $cur
-                elif [[ ${COMP_CWORD} -eq 3 ]]; then
+                if [[ $COMP_CWORD -eq 2 ]]; then
+                    _qfi_targets "$cur"
+                elif [[ $COMP_CWORD -eq 3 ]]; then
                     _filedir
                 fi
                 ;;
             -r)
-                if [[ ${COMP_CWORD} -eq 2 ]]; then
-                    _qfi_targets $cur
-                elif [[ ${COMP_CWORD} -eq 3 ]]; then
+                if [[ $COMP_CWORD -eq 2 ]]; then
+                    _qfi_targets "$cur"
+                elif [[ $COMP_CWORD -eq 3 ]]; then
                     _qfi_none
                 fi
                 ;;
