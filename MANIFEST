@@ -1,9 +1,0 @@
-bin/qfi
-Builder.pm
-Build.PL
-util/bash.comp
-util/zsh.comp
-util/wrapper.sh
-COPYING
-lib/Qfi.pm
-MANIFEST			This list of files
