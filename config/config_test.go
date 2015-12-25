@@ -89,4 +89,53 @@ var _ = Describe("Config", func() {
 			Expect(c.Resolve("qux")).To(Equal("/foo/bar/qux"))
 		})
 	})
+
+	Describe("Config.Add", func() {
+		It("can add a target when given an relative path", func() {
+			// add taraget
+			c, err := New(configDir)
+			Expect(err).NotTo(HaveOccurred())
+			err = c.Add("newtarget", "/dingus")
+			Expect(err).NotTo(HaveOccurred())
+
+			// read the target's symlink
+			destination, err := os.Readlink(filepath.Join(configDir, "newtarget"))
+			Expect(err).NotTo(HaveOccurred())
+
+			// make sure link points to the right place
+			Expect(destination).To(Equal("/dingus"))
+		})
+
+		It("can add a target when given an relative path", func() {
+			// add taraget
+			c, err := New(configDir)
+			Expect(err).NotTo(HaveOccurred())
+			err = c.Add("newtarget", "dingus")
+			Expect(err).NotTo(HaveOccurred())
+
+			// read the target's symlink
+			destination, err := os.Readlink(filepath.Join(configDir, "newtarget"))
+			Expect(err).NotTo(HaveOccurred())
+
+			// make sure link points to the right place
+			pwd, err := os.Getwd()
+			Expect(err).NotTo(HaveOccurred())
+			Expect(destination).To(Equal(filepath.Join(pwd, "dingus")))
+		})
+
+		Context("when config directory is read only", func() {
+			It("returns an error", func() {
+				err := os.Chmod(configDir, 0555)
+				Expect(err).NotTo(HaveOccurred())
+
+				c, err := New(configDir)
+				Expect(err).NotTo(HaveOccurred())
+
+				err = c.Add("newtarget", "dingus")
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(HavePrefix("cannot create symlink: %s: ",
+					filepath.Join(configDir, "newtarget")))
+			})
+		})
+	})
 })

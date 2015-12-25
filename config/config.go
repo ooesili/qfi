@@ -46,15 +46,39 @@ func New(configDir string) (*Config, error) {
 		targets[name] = destination
 	}
 
-	return &Config{targets}, nil
+	return &Config{
+		configDir: configDir,
+		targets:   targets,
+	}, nil
 }
 
 // Config stores a map from target names to their destinations.
 type Config struct {
-	targets map[string]string
+	configDir string
+	targets   map[string]string
 }
 
 // Lookup finds a target by name and returns its destination.
 func (c Config) Resolve(name string) string {
 	return c.targets[name]
+}
+
+// Add adds a new target to the config directory.
+func (c Config) Add(name, destination string) error {
+	targetFile := filepath.Join(c.configDir, name)
+
+	// find absolute path
+	absDestination, err := filepath.Abs(destination)
+	if err != nil {
+		return fmt.Errorf("cannot cannonicalize path: %s: %s", destination, err)
+	}
+
+	// create symlink
+	err = os.Symlink(absDestination, targetFile)
+	if err != nil {
+		return fmt.Errorf("cannot create symlink: %s: %s",
+			targetFile, err.(*os.LinkError).Err)
+	}
+
+	return nil
 }
