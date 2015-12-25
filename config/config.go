@@ -130,3 +130,25 @@ func (c Config) Move(name, destination string) error {
 	// create target with new destination
 	return c.Add(name, destination)
 }
+
+// Rename changes a taget's name while leaving its destination the same.
+func (c Config) Rename(name, newName string) error {
+	// make sure target exists
+	_, ok := c.targets[name]
+	if !ok {
+		return fmt.Errorf("target '%s' does not exist", name)
+	}
+
+	// resolve target names
+	targetFile := filepath.Join(c.configDir, name)
+	newTargetFile := filepath.Join(c.configDir, newName)
+
+	// rename target
+	err := os.Rename(targetFile, newTargetFile)
+	if err != nil {
+		return fmt.Errorf("cannot rename file: %s: %s",
+			targetFile, err.(*os.LinkError).Err)
+	}
+
+	return nil
+}

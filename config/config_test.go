@@ -219,4 +219,33 @@ var _ = Describe("Config", func() {
 			})
 		})
 	})
+
+	Describe("Config.Rename", func() {
+		Context("when given an existing target", func() {
+			It("renames the target", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Rename("foobar", "boofar")
+				Expect(err).ToNot(HaveOccurred())
+
+				_, err = os.Readlink(filepath.Join(configDir, "foobar"))
+				Expect(err).To(HaveOccurred())
+
+				destination, err := os.Readlink(filepath.Join(configDir, "boofar"))
+				Expect(err).ToNot(HaveOccurred())
+				Expect(destination).To(Equal("/foo/bar"))
+			})
+		})
+
+		Context("when given a nonexistent target", func() {
+			It("returns an error", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Rename("badtarget", "boofar")
+				Expect(err).To(MatchError("target 'badtarget' does not exist"))
+			})
+		})
+	})
 })
