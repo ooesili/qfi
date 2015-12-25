@@ -138,4 +138,15 @@ var _ = Describe("Config", func() {
 			})
 		})
 	})
+
+	Describe("Config.List", func() {
+		It("lists all target names in alphabetical order", func() {
+			c, err := New(configDir)
+			Expect(err).ToNot(HaveOccurred())
+
+			Expect(c.List()).To(Equal([]string{
+				"bizbaz", "foobar", "qux",
+			}))
+		})
+	})
 })

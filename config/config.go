@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"sort"
 )
 
 // New creates a new Config by reading symlinks from the given directory.
@@ -81,4 +82,21 @@ func (c Config) Add(name, destination string) error {
 	}
 
 	return nil
+}
+
+// List returns all target names in alphabetical order.
+func (c Config) List() []string {
+	result := make([]string, len(c.targets))
+
+	// add each key
+	i := 0
+	for k := range c.targets {
+		result[i] = k
+		i++
+	}
+
+	// sort result
+	sort.Strings(result)
+
+	return result
 }
