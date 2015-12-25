@@ -174,4 +174,49 @@ var _ = Describe("Config", func() {
 			})
 		})
 	})
+
+	Describe("Config.Move", func() {
+		Context("when given an exsting target", func() {
+			Context("when given an absolute path", func() {
+				It("moves that target's destination", func() {
+					c, err := New(configDir)
+					Expect(err).ToNot(HaveOccurred())
+
+					err = c.Move("foobar", "/some/new/place")
+					Expect(err).ToNot(HaveOccurred())
+
+					destination, err := os.Readlink(filepath.Join(configDir, "foobar"))
+					Expect(err).ToNot(HaveOccurred())
+					Expect(destination).To(Equal("/some/new/place"))
+				})
+			})
+
+			Context("when given an absolute path", func() {
+				It("moves that target's destination", func() {
+					c, err := New(configDir)
+					Expect(err).ToNot(HaveOccurred())
+
+					err = c.Move("foobar", "relativetarget")
+					Expect(err).ToNot(HaveOccurred())
+
+					destination, err := os.Readlink(filepath.Join(configDir, "foobar"))
+					Expect(err).ToNot(HaveOccurred())
+
+					pwd, err := os.Getwd()
+					Expect(err).ToNot(HaveOccurred())
+					Expect(destination).To(Equal(filepath.Join(pwd, "relativetarget")))
+				})
+			})
+		})
+
+		Context("when given a nonexistent target", func() {
+			It("returns an error", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Move("badtarget", "/what/evs")
+				Expect(err).To(MatchError("target 'badtarget' does not exist"))
+			})
+		})
+	})
 })

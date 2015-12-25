@@ -118,3 +118,15 @@ func (c Config) Delete(name string) error {
 
 	return nil
 }
+
+// Move changes the destination of a target.
+func (c Config) Move(name, destination string) error {
+	// remove old target
+	err := c.Delete(name)
+	if err != nil {
+		return err
+	}
+
+	// create target with new destination
+	return c.Add(name, destination)
+}
