@@ -81,12 +81,34 @@ var _ = Describe("Config", func() {
 	})
 
 	Describe("Config.Resolve", func() {
-		It("can resolve destinations of targets", func() {
-			c, err := New(configDir)
-			Expect(err).ToNot(HaveOccurred())
-			Expect(c.Resolve("foobar")).To(Equal("/foo/bar"))
-			Expect(c.Resolve("bizbaz")).To(Equal("/biz/baz"))
-			Expect(c.Resolve("qux")).To(Equal("/foo/bar/qux"))
+		Context("when given existing targets", func() {
+			It("can resolve their destinations", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				destination, err := c.Resolve("foobar")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(destination).To(Equal("/foo/bar"))
+
+				destination, err = c.Resolve("bizbaz")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(destination).To(Equal("/biz/baz"))
+
+				destination, err = c.Resolve("qux")
+				Expect(err).ToNot(HaveOccurred())
+				Expect(destination).To(Equal("/foo/bar/qux"))
+
+			})
+		})
+
+		Context("when given a nonexistent target", func() {
+			It("returns an error", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				_, err = c.Resolve("badtarget")
+				Expect(err).To(MatchError("target 'badtarget' does not exist"))
+			})
 		})
 	})
 

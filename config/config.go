@@ -65,8 +65,13 @@ func (c Config) targetFile(name string) string {
 }
 
 // Lookup finds a target by name and returns its destination.
-func (c Config) Resolve(name string) string {
-	return c.targets[name]
+func (c Config) Resolve(name string) (string, error) {
+	// make sure target exists
+	if destination, ok := c.targets[name]; ok {
+		return destination, nil
+	}
+
+	return "", fmt.Errorf("target '%s' does not exist", name)
 }
 
 // Add adds a new target to the config directory.
