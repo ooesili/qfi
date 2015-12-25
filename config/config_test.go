@@ -173,6 +173,16 @@ var _ = Describe("Config", func() {
 	})
 
 	Describe("Config.Delete", func() {
+		Context("when given no targets", func() {
+			It("does nothing", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Delete()
+				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+
 		Context("when given an existing target", func() {
 			It("removes that target", func() {
 				c, err := New(configDir)
@@ -186,13 +196,32 @@ var _ = Describe("Config", func() {
 			})
 		})
 
-		Context("when given a nonexistent target", func() {
-			It("removes that target", func() {
+		Context("when given multiple existing targets", func() {
+			It("removes all of the targets", func() {
 				c, err := New(configDir)
 				Expect(err).ToNot(HaveOccurred())
 
-				err = c.Delete("badtarget")
+				err = c.Delete("foobar", "bizbaz")
+				Expect(err).ToNot(HaveOccurred())
+
+				_, err = os.Readlink(filepath.Join(configDir, "foobar"))
+				Expect(err).To(HaveOccurred())
+
+				_, err = os.Readlink(filepath.Join(configDir, "bizbaz"))
+				Expect(err).To(HaveOccurred())
+			})
+		})
+
+		Context("when given a nonexistent target", func() {
+			It("returns an error and does not delete any given targets", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Delete("foobar", "badtarget")
 				Expect(err).To(MatchError("target 'badtarget' does not exist"))
+
+				_, err = os.Readlink(filepath.Join(configDir, "foobar"))
+				Expect(err).ToNot(HaveOccurred())
 			})
 		})
 	})

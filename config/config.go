@@ -111,18 +111,22 @@ func (c Config) List() []string {
 	return result
 }
 
-// Delete removes a target from the config directory.
-func (c Config) Delete(name string) error {
-	// make sure target exists
-	if _, ok := c.targets[name]; !ok {
-		return fmt.Errorf("target '%s' does not exist", name)
+// Delete removes the given targets from the config directory.
+func (c Config) Delete(names ...string) error {
+	// make sure each target exists
+	for _, name := range names {
+		if _, ok := c.targets[name]; !ok {
+			return fmt.Errorf("target '%s' does not exist", name)
+		}
 	}
 
-	// remove target
-	err := os.Remove(c.targetFile(name))
-	if err != nil {
-		return fmt.Errorf("cannot remove target: %s: %s",
-			name, err.(*os.PathError).Err)
+	// remove each target
+	for _, name := range names {
+		err := os.Remove(c.targetFile(name))
+		if err != nil {
+			return fmt.Errorf("cannot remove target: %s: %s",
+				name, err.(*os.PathError).Err)
+		}
 	}
 
 	return nil
