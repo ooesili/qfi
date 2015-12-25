@@ -138,10 +138,16 @@ func (c Config) Move(name, destination string) error {
 
 // Rename changes a taget's name while leaving its destination the same.
 func (c Config) Rename(name, newName string) error {
-	// make sure target exists
+	// make sure old target exists
 	_, ok := c.targets[name]
 	if !ok {
 		return fmt.Errorf("target '%s' does not exist", name)
+	}
+
+	// make sure new target does not exist
+	_, ok = c.targets[newName]
+	if ok {
+		return fmt.Errorf("target '%s' exists", newName)
 	}
 
 	// resolve target names

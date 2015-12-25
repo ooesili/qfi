@@ -236,6 +236,16 @@ var _ = Describe("Config", func() {
 				Expect(err).ToNot(HaveOccurred())
 				Expect(destination).To(Equal("/foo/bar"))
 			})
+
+			Context("when the new name already exists", func() {
+				It("returns an error", func() {
+					c, err := New(configDir)
+					Expect(err).ToNot(HaveOccurred())
+
+					err = c.Rename("foobar", "qux")
+					Expect(err).To(MatchError("target 'qux' exists"))
+				})
+			})
 		})
 
 		Context("when given a nonexistent target", func() {
