@@ -109,8 +109,7 @@ func (c Config) List() []string {
 // Delete removes a target from the config directory.
 func (c Config) Delete(name string) error {
 	// make sure target exists
-	_, ok := c.targets[name]
-	if !ok {
+	if _, ok := c.targets[name]; !ok {
 		return fmt.Errorf("target '%s' does not exist", name)
 	}
 
@@ -139,14 +138,12 @@ func (c Config) Move(name, destination string) error {
 // Rename changes a taget's name while leaving its destination the same.
 func (c Config) Rename(name, newName string) error {
 	// make sure old target exists
-	_, ok := c.targets[name]
-	if !ok {
+	if _, ok := c.targets[name]; !ok {
 		return fmt.Errorf("target '%s' does not exist", name)
 	}
 
 	// make sure new target does not exist
-	_, ok = c.targets[newName]
-	if ok {
+	if _, ok := c.targets[newName]; ok {
 		return fmt.Errorf("target '%s' exists", newName)
 	}
 
