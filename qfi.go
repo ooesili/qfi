@@ -7,14 +7,22 @@ import (
 	"github.com/ooesili/qfi/dispatch"
 )
 
-var usage = `
-Usage: qfi TARGET
-       qfi [-a|-m] TARGET FILENAME
-       qfi -d TARGET1 [TARGET2 [...]]
-       qfi -r TARGET NEWNAME
-       qfi -l [TARGET]
-       qfi -s
-`[1:]
+const usage = `Usage:
+  qfi <target>
+    Edit/chdir to a target
+  qfi -a <target> <filename>
+    Add a new target
+  qfi -m <target> <filename>
+    Move a target's destination
+  qfi -d <target> [<target> [...]]
+    Delete one or more targets
+  qfi -r <target> <newname>
+    Rename a target
+  qfi -l [<target>]
+    List all targets or resolve a specific target to its destination
+  qfi -s
+    Show detailed information on all targets
+`
 
 func main() {
 	if err := realMain(); err != nil {
