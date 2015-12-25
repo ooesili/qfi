@@ -4,6 +4,7 @@ import "errors"
 
 type Config interface {
 	Add(name, destination string) error
+	Delete(names ...string) error
 }
 
 func New(config Config) Commands {
@@ -27,4 +28,12 @@ func (c Commands) Add(args []string) error {
 	}
 
 	return c.config.Add(args[0], args[1])
+}
+
+func (c Commands) Delete(args []string) error {
+	if len(args) == 0 {
+		return errors.New("no targets specified")
+	}
+
+	return c.config.Delete(args...)
 }

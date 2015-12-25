@@ -61,14 +61,54 @@ var _ = Describe("Commands", func() {
 			})
 		})
 	})
+
+	Describe("Delete", func() {
+		Context("with no arguments", func() {
+			It("returns an error", func() {
+				err := cmds.Delete([]string{})
+				Expect(err).To(MatchError("no targets specified"))
+			})
+		})
+
+		Context("with exactly one argument", func() {
+			It("calls Config.Delete", func() {
+				err := cmds.Delete([]string{"foobar"})
+				Expect(err).ToNot(HaveOccurred())
+				Expect(cfg.deleteArgs).To(Equal([]string{"foobar"}))
+			})
+		})
+
+		Context("with exactly two arguments", func() {
+			It("calls Config.Delete", func() {
+				err := cmds.Delete([]string{"foobar", "bizbaz"})
+				Expect(err).ToNot(HaveOccurred())
+				Expect(cfg.deleteArgs).To(Equal([]string{"foobar", "bizbaz"}))
+			})
+		})
+
+		Context("with more than two arguments", func() {
+			It("calls Config.Delete", func() {
+				err := cmds.Delete([]string{"foobar", "bizbaz", "qux", "boofar"})
+				Expect(err).ToNot(HaveOccurred())
+				Expect(cfg.deleteArgs).To(Equal(
+					[]string{"foobar", "bizbaz", "qux", "boofar"}))
+			})
+		})
+	})
 })
 
 type mockConfig struct {
-	addArgs struct{ name, destination string }
+	addArgs    struct{ name, destination string }
+	deleteArgs []string
 }
 
 func (c *mockConfig) Add(name, destination string) error {
 	c.addArgs.name = name
 	c.addArgs.destination = destination
+	return nil
+}
+
+func (c *mockConfig) Delete(names ...string) error {
+	c.deleteArgs = names
 	return nil
 }
