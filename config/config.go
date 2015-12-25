@@ -59,6 +59,11 @@ type Config struct {
 	targets   map[string]string
 }
 
+// targetFile returns a target's link file.
+func (c Config) targetFile(name string) string {
+	return filepath.Join(c.configDir, name)
+}
+
 // Lookup finds a target by name and returns its destination.
 func (c Config) Resolve(name string) string {
 	return c.targets[name]
@@ -66,7 +71,7 @@ func (c Config) Resolve(name string) string {
 
 // Add adds a new target to the config directory.
 func (c Config) Add(name, destination string) error {
-	targetFile := filepath.Join(c.configDir, name)
+	targetFile := c.targetFile(name)
 
 	// find absolute path
 	absDestination, err := filepath.Abs(destination)
@@ -110,7 +115,7 @@ func (c Config) Delete(name string) error {
 	}
 
 	// remove target
-	err := os.Remove(filepath.Join(c.configDir, name))
+	err := os.Remove(c.targetFile(name))
 	if err != nil {
 		return fmt.Errorf("cannot remove target: %s: %s",
 			name, err.(*os.PathError).Err)
@@ -140,8 +145,8 @@ func (c Config) Rename(name, newName string) error {
 	}
 
 	// resolve target names
-	targetFile := filepath.Join(c.configDir, name)
-	newTargetFile := filepath.Join(c.configDir, newName)
+	targetFile := c.targetFile(name)
+	newTargetFile := c.targetFile(newName)
 
 	// rename target
 	err := os.Rename(targetFile, newTargetFile)
