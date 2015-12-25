@@ -149,4 +149,29 @@ var _ = Describe("Config", func() {
 			}))
 		})
 	})
+
+	Describe("Config.Delete", func() {
+		Context("when given an existing target", func() {
+			It("removes that target", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Delete("foobar")
+				Expect(err).ToNot(HaveOccurred())
+
+				_, err = os.Readlink(filepath.Join(configDir, "foobar"))
+				Expect(err).To(HaveOccurred())
+			})
+		})
+
+		Context("when given a nonexistent target", func() {
+			It("removes that target", func() {
+				c, err := New(configDir)
+				Expect(err).ToNot(HaveOccurred())
+
+				err = c.Delete("badtarget")
+				Expect(err).To(MatchError("target 'badtarget' does not exist"))
+			})
+		})
+	})
 })
