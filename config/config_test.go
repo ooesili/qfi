@@ -34,7 +34,8 @@ var _ = Describe("Config", func() {
 	})
 
 	AfterEach(func() {
-		os.RemoveAll(configDir)
+		err := os.RemoveAll(configDir)
+		Expect(err).ToNot(HaveOccurred())
 	})
 
 	Describe("New", func() {
@@ -146,10 +147,17 @@ var _ = Describe("Config", func() {
 		})
 
 		Context("when config directory is read only", func() {
-			It("returns an error", func() {
+			BeforeEach(func() {
 				err := os.Chmod(configDir, 0555)
 				Expect(err).NotTo(HaveOccurred())
+			})
 
+			AfterEach(func() {
+				err := os.Chmod(configDir, 0755)
+				Expect(err).NotTo(HaveOccurred())
+			})
+
+			It("returns an error", func() {
 				c, err := New(configDir)
 				Expect(err).NotTo(HaveOccurred())
 
