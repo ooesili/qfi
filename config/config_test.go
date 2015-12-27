@@ -60,7 +60,7 @@ var _ = Describe("Config", func() {
 				_, err := New(badConfigDir)
 				Expect(err).To(HaveOccurred())
 				Expect(err.Error()).To(HavePrefix(
-					fmt.Sprintf("cannot open directory: %s: ", badConfigDir),
+					fmt.Sprintf("cannot stat directory: %s: ", badConfigDir),
 				))
 			})
 		})
@@ -73,9 +73,8 @@ var _ = Describe("Config", func() {
 				file.Close()
 
 				_, err = New(badConfigDir)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(HavePrefix(
-					fmt.Sprintf("cannot read directory: %s: ", badConfigDir),
+				Expect(err).To(MatchError(
+					fmt.Sprintf("not a directory: %s", badConfigDir),
 				))
 			})
 		})
