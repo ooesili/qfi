@@ -1,7 +1,9 @@
+// Package detect inspects and summarizes file types and permissions.
 package detect
 
 import "os"
 
+// Type represents an abstract file type and permission combination.
 type Type int
 
 const (
@@ -16,6 +18,7 @@ const (
 	UnknownFile
 )
 
+// Detect returns a Type based on the given path.
 func Detect(path string) Type {
 	// try to stat file
 	stat, err := os.Stat(path)
