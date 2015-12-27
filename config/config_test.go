@@ -148,12 +148,12 @@ var _ = Describe("Config", func() {
 
 		Context("when config directory is read only", func() {
 			BeforeEach(func() {
-				err := os.Chmod(configDir, 0555)
+				err := os.Chmod(configDir, 0500)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
 			AfterEach(func() {
-				err := os.Chmod(configDir, 0755)
+				err := os.Chmod(configDir, 0700)
 				Expect(err).NotTo(HaveOccurred())
 			})
 
