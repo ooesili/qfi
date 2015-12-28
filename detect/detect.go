@@ -18,8 +18,11 @@ const (
 	UnknownFile
 )
 
+// Detector holds the Detect method so that it can be passed into interfaces.
+type Detector struct{}
+
 // Detect returns a Type based on the given path.
-func Detect(path string) Type {
+func (Detector) Detect(path string) Type {
 	// try to stat file
 	stat, err := os.Stat(path)
 	if err != nil {

@@ -13,13 +13,15 @@ import (
 
 var _ = Describe("Detect", func() {
 	var (
-		tempDir string
+		tempDir  string
+		detector Detector
 	)
 
 	BeforeEach(func() {
 		var err error
 		tempDir, err = ioutil.TempDir("", "qfi-test-")
 		Expect(err).ToNot(HaveOccurred())
+		detector = Detector{}
 	})
 
 	AfterEach(func() {
@@ -34,7 +36,7 @@ var _ = Describe("Detect", func() {
 			Expect(err).ToNot(HaveOccurred())
 			fi.Close()
 
-			Expect(Detect(file)).To(Equal(NormalFile))
+			Expect(detector.Detect(file)).To(Equal(NormalFile))
 		})
 	})
 
@@ -47,7 +49,7 @@ var _ = Describe("Detect", func() {
 			Expect(err).ToNot(HaveOccurred())
 			fi.Close()
 
-			Expect(Detect(file)).To(Equal(UnwritableFile))
+			Expect(detector.Detect(file)).To(Equal(UnwritableFile))
 		})
 	})
 
@@ -64,14 +66,14 @@ var _ = Describe("Detect", func() {
 
 		It("returns InaccessibleFile", func() {
 			file := filepath.Join(tempDir, "foobar")
-			Expect(Detect(file)).To(Equal(InaccessibleFile))
+			Expect(detector.Detect(file)).To(Equal(InaccessibleFile))
 		})
 	})
 
 	Context("when given a nonexistent file", func() {
 		It("returns NonexistentFile", func() {
 			file := filepath.Join(tempDir, "foobar")
-			Expect(Detect(file)).To(Equal(NonexistentFile))
+			Expect(detector.Detect(file)).To(Equal(NonexistentFile))
 		})
 	})
 
@@ -81,7 +83,7 @@ var _ = Describe("Detect", func() {
 			err := os.Mkdir(file, 0700)
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(Detect(file)).To(Equal(NormalDirectory))
+			Expect(detector.Detect(file)).To(Equal(NormalDirectory))
 		})
 	})
 
@@ -91,7 +93,7 @@ var _ = Describe("Detect", func() {
 			err := os.Mkdir(file, 0000)
 			Expect(err).ToNot(HaveOccurred())
 
-			Expect(Detect(file)).To(Equal(UnreadableDirectory))
+			Expect(detector.Detect(file)).To(Equal(UnreadableDirectory))
 		})
 	})
 
@@ -103,7 +105,7 @@ var _ = Describe("Detect", func() {
 			fi.Close()
 
 			file := filepath.Join(badParent, "foobar")
-			Expect(Detect(file)).To(Equal(UnknownFile))
+			Expect(detector.Detect(file)).To(Equal(UnknownFile))
 		})
 	})
 })
