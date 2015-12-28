@@ -1,10 +1,10 @@
-package status_test
+package summarize_test
 
 import (
 	"fmt"
 
 	"github.com/ooesili/qfi/detect"
-	. "github.com/ooesili/qfi/status"
+	. "github.com/ooesili/qfi/summarize"
 
 	"sort"
 
@@ -12,9 +12,9 @@ import (
 	. "github.com/onsi/gomega"
 )
 
-var _ = Describe("Status", func() {
+var _ = Describe("Summarize", func() {
 	Context("when given a single target", func() {
-		It("displays it's status", func() {
+		It("displays it's summary", func() {
 			// setup test cases
 			tests := []struct {
 				fileType   detect.Type
@@ -38,8 +38,8 @@ var _ = Describe("Status", func() {
 				detector := mockDetector(map[string]detect.Type{
 					"/foo/bar": test.fileType,
 				})
-				status := Status(resolver, detector)
-				Expect(status).To(Equal(
+				summary := Summary(resolver, detector)
+				Expect(summary).To(Equal(
 					fmt.Sprintf("foobar %c> /foo/bar\n", test.arrowChar)),
 					"when given detect.%s", test.typeString)
 			}
@@ -59,8 +59,8 @@ var _ = Describe("Status", func() {
 				"/foo/bar/qux": detect.NormalFile,
 			})
 
-			status := Status(resolver, detector)
-			Expect(status).To(Equal(`
+			summary := Summary(resolver, detector)
+			Expect(summary).To(Equal(`
 longer  #> /biz/baz
 longest -> /foo/bar/qux
 short   /> /foo/bar

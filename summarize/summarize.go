@@ -1,5 +1,6 @@
-// Package status prints a pretty summary of all targets and their statuses.
-package status
+// Package summarize prints a pretty summary of all targets and their
+// destinations.
+package summarize
 
 import (
 	"bytes"
@@ -21,9 +22,9 @@ type Detector interface {
 	Detect(path string) detect.Type
 }
 
-// Status returns a pretty string summarizing all targets, their destinations,
+// Summary returns a pretty string summarizing all targets, their destinations,
 // and the type of each destination.
-func Status(resolver Resolver, detector Detector) string {
+func Summary(resolver Resolver, detector Detector) string {
 	result := &bytes.Buffer{}
 	targets := resolver.List()
 
@@ -40,7 +41,7 @@ func Status(resolver Resolver, detector Detector) string {
 		// resolve target
 		destination, err := resolver.Resolve(target)
 		if err != nil {
-			panic("status: List/Resolve mismatch, cannot resolve: " + target)
+			panic("summary: List/Resolve mismatch, cannot resolve: " + target)
 		}
 
 		// find arrow character
@@ -54,7 +55,7 @@ func Status(resolver Resolver, detector Detector) string {
 	return result.String()
 }
 
-// arrowChar returns the arrow character the status line.
+// arrowChar returns the arrow character the summary line.
 func arrowChar(fileType detect.Type) rune {
 	switch fileType {
 	case detect.NormalFile:
