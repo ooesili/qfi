@@ -1,4 +1,4 @@
-// Package summarize prints a pretty summary of all targets and their
+// Package summary prints a pretty summary of all targets and their
 // destinations.
 package summarize
 
@@ -22,11 +22,17 @@ type Detector interface {
 	Detect(path string) detect.Type
 }
 
-// Summary returns a pretty string summarizing all targets, their destinations,
+// Summarizer returns a pretty string summarizing targets, their destinations,
 // and the type of each destination.
-func Summary(resolver Resolver, detector Detector) string {
+type Summarizer struct {
+	Detector Detector
+	Resolver Resolver
+}
+
+// Summary retuns a the summary of all targets in the Resolver.
+func (s Summarizer) Summary() string {
 	result := &bytes.Buffer{}
-	targets := resolver.List()
+	targets := s.Resolver.List()
 
 	// figure width of first column
 	width := 0
@@ -39,13 +45,13 @@ func Summary(resolver Resolver, detector Detector) string {
 
 	for _, target := range targets {
 		// resolve target
-		destination, err := resolver.Resolve(target)
+		destination, err := s.Resolver.Resolve(target)
 		if err != nil {
 			panic("summary: List/Resolve mismatch, cannot resolve: " + target)
 		}
 
 		// find arrow character
-		arrow := arrowChar(detector.Detect(destination))
+		arrow := arrowChar(s.Detector.Detect(destination))
 
 		// add target to the result
 		fmt.Fprintf(result, "%-"+widthStr+"s %c> %s\n",

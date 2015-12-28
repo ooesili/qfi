@@ -38,7 +38,9 @@ var _ = Describe("Summarize", func() {
 				detector := mockDetector(map[string]detect.Type{
 					"/foo/bar": test.fileType,
 				})
-				summary := Summary(resolver, detector)
+
+				summarizer := Summarizer{detector, resolver}
+				summary := summarizer.Summary()
 				Expect(summary).To(Equal(
 					fmt.Sprintf("foobar %c> /foo/bar\n", test.arrowChar)),
 					"when given detect.%s", test.typeString)
@@ -59,7 +61,8 @@ var _ = Describe("Summarize", func() {
 				"/foo/bar/qux": detect.NormalFile,
 			})
 
-			summary := Summary(resolver, detector)
+			summarizer := Summarizer{detector, resolver}
+			summary := summarizer.Summary()
 			Expect(summary).To(Equal(`
 longer  #> /biz/baz
 longest -> /foo/bar/qux
