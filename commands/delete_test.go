@@ -21,7 +21,7 @@ var _ = Describe("Delete", func() {
 	Context("with no arguments", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{})
-			Expect(err).To(MatchError("no targets specified"))
+			Expect(err).To(MatchError(ErrNoTargets))
 		})
 	})
 

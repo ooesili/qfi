@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 	"io"
 )
@@ -36,5 +35,5 @@ func (l List) Run(args []string) error {
 		return nil
 	}
 
-	return errors.New("too many arguments")
+	return ErrTooManyArgs
 }

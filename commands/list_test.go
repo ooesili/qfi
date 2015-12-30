@@ -44,7 +44,7 @@ var _ = Describe("List", func() {
 	Context("with more than one argument", func() {
 		It("it returns an error", func() {
 			err := cmd.Run([]string{"foobar", "bizbaz"})
-			Expect(err).To(MatchError("too many arguments"))
+			Expect(err).To(MatchError(ErrTooManyArgs))
 		})
 	})
 })

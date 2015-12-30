@@ -1,7 +1,5 @@
 package commands
 
-import "errors"
-
 type MoveDriver interface {
 	Move(name, destination string) error
 }
@@ -12,13 +10,13 @@ type Move struct {
 
 func (m Move) Run(args []string) error {
 	if len(args) == 0 {
-		return errors.New("no target specified")
+		return ErrNoTarget
 	}
 	if len(args) == 1 {
-		return errors.New("no file specified")
+		return ErrNoFile
 	}
 	if len(args) > 2 {
-		return errors.New("too many arguments")
+		return ErrTooManyArgs
 	}
 
 	return m.Driver.Move(args[0], args[1])

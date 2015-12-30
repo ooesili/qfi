@@ -21,14 +21,14 @@ var _ = Describe("Move", func() {
 	Context("with no arguments", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{})
-			Expect(err).To(MatchError("no target specified"))
+			Expect(err).To(MatchError(ErrNoTarget))
 		})
 	})
 
 	Context("with exactly one argument", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{"foobar"})
-			Expect(err).To(MatchError("no file specified"))
+			Expect(err).To(MatchError(ErrNoFile))
 		})
 	})
 
@@ -44,7 +44,7 @@ var _ = Describe("Move", func() {
 	Context("with more than two arguments", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{"foobar", "/foo/bar", "oops"})
-			Expect(err).To(MatchError("too many arguments"))
+			Expect(err).To(MatchError(ErrTooManyArgs))
 		})
 	})
 })

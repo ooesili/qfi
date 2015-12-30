@@ -21,7 +21,7 @@ var _ = Describe("Edit", func() {
 	Context("with no arguments", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{})
-			Expect(err).To(MatchError("no target specified"))
+			Expect(err).To(MatchError(ErrNoTarget))
 		})
 	})
 
@@ -36,7 +36,7 @@ var _ = Describe("Edit", func() {
 	Context("with more than one argument", func() {
 		It("it returns an error", func() {
 			err := cmd.Run([]string{"foobar", "bizbaz"})
-			Expect(err).To(MatchError("too many arguments"))
+			Expect(err).To(MatchError(ErrTooManyArgs))
 		})
 	})
 })

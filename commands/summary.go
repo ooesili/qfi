@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"errors"
 	"fmt"
 	"io"
 )
@@ -17,7 +16,7 @@ type Summary struct {
 
 func (s Summary) Run(args []string) error {
 	if len(args) != 0 {
-		return errors.New("too many arguments")
+		return ErrTooManyArgs
 	}
 
 	fmt.Fprint(s.Logger, s.Driver.Summary())

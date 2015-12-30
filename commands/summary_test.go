@@ -33,7 +33,7 @@ var _ = Describe("Summary", func() {
 	Context("with more than zero arguments", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{"foobar"})
-			Expect(err).To(MatchError("too many arguments"))
+			Expect(err).To(MatchError(ErrTooManyArgs))
 		})
 	})
 })
