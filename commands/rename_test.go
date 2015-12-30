@@ -28,7 +28,7 @@ var _ = Describe("Rename", func() {
 	Context("with exactly one argument", func() {
 		It("returns an error", func() {
 			err := cmd.Run([]string{"foobar"})
-			Expect(err).To(MatchError("no file specified"))
+			Expect(err).To(MatchError("new name not specified"))
 		})
 	})
 

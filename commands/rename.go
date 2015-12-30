@@ -15,7 +15,7 @@ func (m Rename) Run(args []string) error {
 		return errors.New("no target specified")
 	}
 	if len(args) == 1 {
-		return errors.New("no file specified")
+		return errors.New("new name not specified")
 	}
 	if len(args) > 2 {
 		return errors.New("too many arguments")
