@@ -56,13 +56,13 @@ func (e Editor) Edit(name string) error {
 	switch fileType {
 	// files
 	case detect.NormalFile:
-		command = "vim"
+		command = e.NormalEditor
 	case detect.UnwritableFile:
 		command = "sudoedit"
 	case detect.InaccessibleFile:
 		command = "sudoedit"
 	case detect.NonexistentFile:
-		command = "vim"
+		command = e.NormalEditor
 
 	// directories
 	case detect.NormalDirectory:

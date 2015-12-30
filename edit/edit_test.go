@@ -33,10 +33,10 @@ var _ = Describe("Edit", func() {
 				typeString  string
 				commandName string
 			}{
-				{detect.NormalFile, "NormalFile", "vim"},
+				{detect.NormalFile, "NormalFile", "emacs"},
 				{detect.UnwritableFile, "UnwritableFile", "sudoedit"},
 				{detect.InaccessibleFile, "InaccessibleFile", "sudoedit"},
-				{detect.NonexistentFile, "NonexistentFile", "vim"},
+				{detect.NonexistentFile, "NonexistentFile", "emacs"},
 			}
 
 			for _, test := range tests {
@@ -44,7 +44,7 @@ var _ = Describe("Edit", func() {
 				executor := &mockExecutor{}
 				resolver := &mockResolver{destination: "/foo/bar"}
 
-				editor := Editor{"vim", detector, executor, resolver}
+				editor := Editor{"emacs", detector, executor, resolver}
 				err := editor.Edit("foobar")
 				Expect(err).ToNot(HaveOccurred(),
 					"Edit should not fail for %s", test.typeString)
