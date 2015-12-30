@@ -3,16 +3,18 @@
 package dispatch
 
 var (
-	ErrNotFound = UsageError("command not found")
-	ErrNoArgs   = UsageError("no arguments given")
+	ErrNotFound = UsageError{"command not found"}
+	ErrNoArgs   = UsageError{"no arguments given"}
 )
 
 // UsageError indicates invalid command usage.
-type UsageError string
+type UsageError struct {
+	Msg string
+}
 
 // Error implements the error interface.
 func (err UsageError) Error() string {
-	return string(err)
+	return err.Msg
 }
 
 // New creates a new Dispatcher.
