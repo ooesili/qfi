@@ -33,12 +33,13 @@ const usage = `Usage:
 
 func main() {
 	if err := realMain(); err != nil {
-		fmt.Printf("qfi: %s\n", err)
-
 		// exit with status 2 if wrapper should chdir
 		if _, ok := err.(edit.WrapperShouldChdirError); ok {
 			os.Exit(2)
 		}
+
+		// print error message
+		fmt.Printf("qfi: %s\n", err)
 
 		// print usage info is this is a UsageError
 		if _, ok := err.(dispatch.UsageError); ok {
