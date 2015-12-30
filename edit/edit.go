@@ -3,19 +3,15 @@
 package edit
 
 import (
+	"errors"
 	"fmt"
 
 	"github.com/ooesili/qfi/detect"
 )
 
-// WrapperShouldChdirError is returned when the shell wrapper function should
+// ErrWrapperShouldChdir is returned when the shell wrapper function should
 // perform a chdir.
-type WrapperShouldChdirError struct{ Destination string }
-
-// Error implements the error interface.
-func (e WrapperShouldChdirError) Error() string {
-	return fmt.Sprintf("wrapper should chdir: %s", e.Destination)
-}
+var ErrWrapperShouldChdir = errors.New("wrapper chould chdir")
 
 // Detector detects a file's type.
 type Detector interface {
@@ -66,9 +62,9 @@ func (e Editor) Edit(name string) error {
 
 	// directories
 	case detect.NormalDirectory:
-		return WrapperShouldChdirError{destination}
+		return ErrWrapperShouldChdir
 	case detect.UnreadableDirectory:
-		return WrapperShouldChdirError{destination}
+		return ErrWrapperShouldChdir
 
 	// UnknownFile
 	default:

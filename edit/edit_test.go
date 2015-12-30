@@ -56,7 +56,7 @@ var _ = Describe("Edit", func() {
 	})
 
 	Context("when the resolver returns a directory type", func() {
-		It("should return an WrapperShouldChdirError", func() {
+		It("should return ErrWrapperShouldChdir", func() {
 			tests := []struct {
 				fileType   detect.Type
 				typeString string
@@ -72,7 +72,7 @@ var _ = Describe("Edit", func() {
 
 				editor := Editor{"vim", detector, executor, resolver}
 				err := editor.Edit("foobar")
-				Expect(err).To(MatchError(WrapperShouldChdirError{"/foo/bar"}),
+				Expect(err).To(MatchError(ErrWrapperShouldChdir),
 					"Edit return error for %s", test.typeString)
 			}
 		})

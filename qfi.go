@@ -33,8 +33,8 @@ const usage = `Usage:
 
 func main() {
 	if err := realMain(); err != nil {
-		// exit with status 2 if wrapper should chdir
-		if _, ok := err.(edit.WrapperShouldChdirError); ok {
+		// exit with status 2 and print nothing if wrapper should chdir
+		if err == edit.ErrWrapperShouldChdir {
 			os.Exit(2)
 		}
 
