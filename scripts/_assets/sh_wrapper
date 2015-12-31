@@ -1,0 +1,8 @@
+qfi() {
+  env qfi $*
+  local code=$?
+  case $code in
+    2) cd "$(env qfi -l $1)";;
+    *) return $code;;
+  esac
+}

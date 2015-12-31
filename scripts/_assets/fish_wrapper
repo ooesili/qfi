@@ -1,0 +1,7 @@
+function qfi;
+  env qfi $argv;
+  switch $status;
+    case '2'; cd (env qfi -l $argv[1]);
+    case '*'; return $status;
+  end;
+end
