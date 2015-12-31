@@ -11,6 +11,7 @@ import (
 	"github.com/ooesili/qfi/detect"
 	"github.com/ooesili/qfi/dispatch"
 	"github.com/ooesili/qfi/edit"
+	"github.com/ooesili/qfi/scripts"
 	"github.com/ooesili/qfi/summarize"
 )
 
@@ -29,6 +30,8 @@ const usage = `Usage:
     List all targets or resolve a specific target to its destination
   qfi -s
     Show detailed information on all targets
+  qfi --shell (zsh|fish|bash) (comp|wrapper)
+    Print completion or wrapper script for a shell
 `
 
 func main() {
@@ -80,6 +83,7 @@ func realMain() error {
 	detector := detect.Detector{}
 	summarizer := summarize.Summarizer{detector, cfg}
 	editor := edit.Editor{editorCmd, detector, edit.RealExecutor{}, cfg}
+	scriptGetter := scripts.Scripts{}
 
 	// register commands
 	dispatcher := dispatch.New()
@@ -89,6 +93,7 @@ func realMain() error {
 	dispatcher.Register("-r", &commands.Rename{cfg})
 	dispatcher.Register("-l", &commands.List{cfg, os.Stdout})
 	dispatcher.Register("-s", &commands.Summary{summarizer, os.Stdout})
+	dispatcher.Register("--shell", &commands.Shell{scriptGetter, os.Stdout})
 	dispatcher.RegisterFallback(&commands.Edit{editor})
 
 	return dispatcher.Run(os.Args[1:])
