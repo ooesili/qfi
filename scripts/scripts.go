@@ -24,7 +24,7 @@ func (s Scripts) GetScript(shell, scriptType string) ([]byte, error) {
 			goto supported
 		}
 	}
-	return nil, fmt.Errorf("unsupported shell: notashell")
+	return nil, fmt.Errorf("unsupported shell: %s", shell)
 
 supported:
 	// validate script type
