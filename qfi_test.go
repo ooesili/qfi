@@ -42,10 +42,8 @@ var _ = Describe("Qfi", func() {
 		tempDir, err = ioutil.TempDir("", "qfi-test-")
 		Expect(err).ToNot(HaveOccurred())
 
-		// create config dir inside temp dir
+		// make sure a config directory is automatically created
 		configDir = filepath.Join(tempDir, "config")
-		err = os.Mkdir(configDir, 0700)
-		Expect(err).ToNot(HaveOccurred())
 
 		// set QFI_CONFIGDIR
 		err = os.Setenv("QFI_CONFIGDIR", configDir)
