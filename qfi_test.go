@@ -10,22 +10,9 @@ import (
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
-	"github.com/onsi/gomega/gexec"
 )
 
 var _ = Describe("Qfi", func() {
-	var qfiCmd string
-
-	BeforeSuite(func() {
-		var err error
-		qfiCmd, err = gexec.Build("github.com/ooesili/qfi")
-		Expect(err).ToNot(HaveOccurred())
-	})
-
-	AfterSuite(func() {
-		gexec.CleanupBuildArtifacts()
-	})
-
 	var (
 		tempDir   string
 		configDir string
