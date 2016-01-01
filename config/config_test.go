@@ -54,14 +54,12 @@ var _ = Describe("Config", func() {
 		})
 
 		Context("when a nonexistent directory is given", func() {
-			It("returns an error", func() {
-				badConfigDir := filepath.Join(configDir, "notadir")
+			It("creates the directory", func() {
+				notadir := filepath.Join(configDir, "notadir")
 
-				_, err := New(badConfigDir)
-				Expect(err).To(HaveOccurred())
-				Expect(err.Error()).To(HavePrefix(
-					fmt.Sprintf("cannot stat directory: %s: ", badConfigDir),
-				))
+				_, err := New(notadir)
+				Expect(err).ToNot(HaveOccurred())
+				Expect(notadir).To(BeADirectory())
 			})
 		})
 
@@ -73,9 +71,9 @@ var _ = Describe("Config", func() {
 				file.Close()
 
 				_, err = New(badConfigDir)
-				Expect(err).To(MatchError(
-					fmt.Sprintf("not a directory: %s", badConfigDir),
-				))
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(HavePrefix(
+					"cannot create directory: %s", badConfigDir))
 			})
 		})
 	})

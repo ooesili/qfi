@@ -10,16 +10,11 @@ import (
 
 // New creates a new Config by reading symlinks from the given directory.
 func New(configDir string) (*Config, error) {
-	// make sure path a directory
-	stat, err := os.Stat(configDir)
+	// make sure config directory exists
+	err := os.MkdirAll(configDir, 0755)
 	if err != nil {
 		return nil, fmt.Errorf(
-			"cannot stat directory: %s: %s",
-			configDir, err.(*os.PathError).Err,
-		)
-	}
-	if !stat.IsDir() {
-		return nil, fmt.Errorf("not a directory: %s", configDir)
+			"cannot create directory: %s: %s", configDir, err)
 	}
 
 	targets := make(map[string]string)
