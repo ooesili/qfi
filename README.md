@@ -1,4 +1,4 @@
-qfi
+qfi [![Build Status](https://travis-ci.org/ooesili/qfi.svg?branch=master)](https://travis-ci.org/ooesili/qfi)
 ====================
 
 ### quickly edit commonly used files
