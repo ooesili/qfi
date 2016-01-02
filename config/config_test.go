@@ -14,7 +14,9 @@ import (
 
 var _ = Describe("Config", func() {
 	var (
-		configDir string
+		configDir      string
+		badName        string
+		errInvalidName string
 	)
 
 	BeforeEach(func() {
@@ -31,6 +33,10 @@ var _ = Describe("Config", func() {
 		symlink("/foo/bar", "foobar")
 		symlink("/biz/baz", "bizbaz")
 		symlink("/foo/bar/qux", "qux")
+
+		// used often in input validation tests
+		badName = fmt.Sprintf("bad%cname", os.PathSeparator)
+		errInvalidName = fmt.Sprintf("invalid target name: %s", badName)
 	})
 
 	AfterEach(func() {
@@ -111,6 +117,13 @@ var _ = Describe("Config", func() {
 					Expect(err).To(MatchError("target 'badtarget' does not exist"))
 				})
 			})
+
+			Context("when given an invalid target name", func() {
+				It("returns an error", func() {
+					_, err := c.Resolve(badName)
+					Expect(err).To(MatchError(errInvalidName))
+				})
+			})
 		})
 
 		Describe("Config.Add", func() {
@@ -158,6 +171,13 @@ var _ = Describe("Config", func() {
 					Expect(err).To(HaveOccurred())
 					Expect(err.Error()).To(HavePrefix("cannot create symlink: %s: ",
 						filepath.Join(configDir, "newtarget")))
+				})
+			})
+
+			Context("when given an invalid target name", func() {
+				It("returns an error", func() {
+					err := c.Add(badName, "/bleeblah")
+					Expect(err).To(MatchError(errInvalidName))
 				})
 			})
 		})
@@ -210,6 +230,13 @@ var _ = Describe("Config", func() {
 					Expect(err).ToNot(HaveOccurred())
 				})
 			})
+
+			Context("when given an invalid target name", func() {
+				It("returns an error", func() {
+					err := c.Delete(badName)
+					Expect(err).To(MatchError(errInvalidName))
+				})
+			})
 		})
 
 		Describe("Config.Move", func() {
@@ -246,6 +273,13 @@ var _ = Describe("Config", func() {
 					Expect(err).To(MatchError("target 'badtarget' does not exist"))
 				})
 			})
+
+			Context("when given an invalid target name", func() {
+				It("returns an error", func() {
+					err := c.Rename("foobar", badName)
+					Expect(err).To(MatchError(errInvalidName))
+				})
+			})
 		})
 
 		Describe("Config.Rename", func() {
@@ -274,6 +308,20 @@ var _ = Describe("Config", func() {
 				It("returns an error", func() {
 					err := c.Rename("badtarget", "boofar")
 					Expect(err).To(MatchError("target 'badtarget' does not exist"))
+				})
+			})
+
+			Context("when given an invalid target name for the old name", func() {
+				It("returns an error", func() {
+					err := c.Rename(badName, "foobar")
+					Expect(err).To(MatchError(errInvalidName))
+				})
+			})
+
+			Context("when given an invalid target name for the new name", func() {
+				It("returns an error", func() {
+					err := c.Rename("foobar", badName)
+					Expect(err).To(MatchError(errInvalidName))
 				})
 			})
 		})

@@ -73,6 +73,11 @@ func (c Config) targetFile(name string) string {
 
 // Lookup finds a target by name and returns its destination.
 func (c Config) Resolve(name string) (string, error) {
+	// validate target name
+	if err := validateNames(name); err != nil {
+		return "", err
+	}
+
 	// make sure target exists
 	if destination, ok := c.targets[name]; ok {
 		return destination, nil
@@ -83,6 +88,11 @@ func (c Config) Resolve(name string) (string, error) {
 
 // Add adds a new target to the config directory.
 func (c Config) Add(name, destination string) error {
+	// validate target name
+	if err := validateNames(name); err != nil {
+		return err
+	}
+
 	targetFile := c.targetFile(name)
 
 	// find absolute path
@@ -120,6 +130,11 @@ func (c Config) List() []string {
 
 // Delete removes the given targets from the config directory.
 func (c Config) Delete(names ...string) error {
+	// validate names
+	if err := validateNames(names...); err != nil {
+		return err
+	}
+
 	// make sure each target exists
 	for _, name := range names {
 		if _, ok := c.targets[name]; !ok {
@@ -141,6 +156,11 @@ func (c Config) Delete(names ...string) error {
 
 // Move changes the destination of a target.
 func (c Config) Move(name, destination string) error {
+	// validate target name
+	if err := validateNames(name); err != nil {
+		return err
+	}
+
 	// remove old target
 	err := c.Delete(name)
 	if err != nil {
@@ -153,6 +173,11 @@ func (c Config) Move(name, destination string) error {
 
 // Rename changes a taget's name while leaving its destination the same.
 func (c Config) Rename(name, newName string) error {
+	// validate both target names
+	if err := validateNames(name, newName); err != nil {
+		return err
+	}
+
 	// make sure old target exists
 	if _, ok := c.targets[name]; !ok {
 		return fmt.Errorf("target '%s' does not exist", name)
@@ -174,5 +199,17 @@ func (c Config) Rename(name, newName string) error {
 			targetFile, err.(*os.LinkError).Err)
 	}
 
+	return nil
+}
+
+// validateName returns an error if the target name is invalid
+func validateNames(names ...string) error {
+	for _, name := range names {
+		for _, char := range name {
+			if char == os.PathSeparator {
+				return fmt.Errorf("invalid target name: %s", name)
+			}
+		}
+	}
 	return nil
 }
