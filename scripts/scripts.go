@@ -1,3 +1,5 @@
+// Package scripts returns wrapper and completion scripts embeded into the
+// binary with go-bindata.
 package scripts
 
 //go:generate go-bindata -pkg scripts _assets
@@ -15,8 +17,10 @@ var aliases = map[string]string{
 // shells is a whitelist of all supported shells
 var SupportedShells = []string{"zsh", "bash", "fish"}
 
+// Scripts holds the GetScript method so that it can be passed into interfaces.
 type Scripts struct{}
 
+// GetScript returns the script flie for the given shell and type.
 func (s Scripts) GetScript(shell, scriptType string) ([]byte, error) {
 	// make sure the shell is supported
 	for _, supportedShell := range SupportedShells {
