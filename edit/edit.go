@@ -46,24 +46,22 @@ func (e Editor) Edit(name string) error {
 		return err
 	}
 
-	// figure out which command to use
 	var command string
+	args := make([]string, 0, 2)
+
+	// figure out which command to use
 	fileType := e.Detector.Detect(destination)
 	switch fileType {
+
 	// files
-	case detect.NormalFile:
+	case detect.NormalFile, detect.NonexistentFile:
 		command = e.NormalEditor
-	case detect.UnwritableFile:
-		command = "sudoedit"
-	case detect.InaccessibleFile:
-		command = "sudoedit"
-	case detect.NonexistentFile:
-		command = e.NormalEditor
+	case detect.UnwritableFile, detect.InaccessibleFile:
+		command = "sudo"
+		args = append(args, "-e")
 
 	// directories
-	case detect.NormalDirectory:
-		return ErrWrapperShouldChdir
-	case detect.UnreadableDirectory:
+	case detect.NormalDirectory, detect.UnreadableDirectory:
 		return ErrWrapperShouldChdir
 
 	// UnknownFile
@@ -72,5 +70,6 @@ func (e Editor) Edit(name string) error {
 	}
 
 	// run the editor
-	return e.Executor.Exec(command, destination)
+	args = append(args, destination)
+	return e.Executor.Exec(command, args...)
 }

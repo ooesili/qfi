@@ -28,21 +28,27 @@ var _ = Describe("Edit", func() {
 
 	Context("when the resolver returns a file type", func() {
 		It("executes the correct editor", func() {
+			destination := "/biz/baz"
 			tests := []struct {
 				fileType    detect.Type
 				typeString  string
 				commandName string
+				commandArgs []string
 			}{
-				{detect.NormalFile, "NormalFile", "emacs"},
-				{detect.UnwritableFile, "UnwritableFile", "sudoedit"},
-				{detect.InaccessibleFile, "InaccessibleFile", "sudoedit"},
-				{detect.NonexistentFile, "NonexistentFile", "emacs"},
+				{detect.NormalFile, "NormalFile",
+					"emacs", []string{destination}},
+				{detect.UnwritableFile, "UnwritableFile",
+					"sudo", []string{"-e", destination}},
+				{detect.InaccessibleFile, "InaccessibleFile",
+					"sudo", []string{"-e", destination}},
+				{detect.NonexistentFile, "NonexistentFile",
+					"emacs", []string{destination}},
 			}
 
 			for _, test := range tests {
 				detector := &mockDetector{fileType: test.fileType}
 				executor := &mockExecutor{}
-				resolver := &mockResolver{destination: "/foo/bar"}
+				resolver := &mockResolver{destination: destination}
 
 				editor := Editor{"emacs", detector, executor, resolver}
 				err := editor.Edit("foobar")
@@ -51,6 +57,9 @@ var _ = Describe("Edit", func() {
 
 				Expect(executor.calledName).To(Equal(test.commandName),
 					"should run %s when given %s", test.commandName, test.typeString)
+
+				Expect(executor.calledArgs).To(Equal(test.commandArgs),
+					"args should match when given %s", test.typeString)
 			}
 		})
 	})
