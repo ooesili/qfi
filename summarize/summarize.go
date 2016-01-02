@@ -64,17 +64,11 @@ func (s Summarizer) Summary() string {
 // arrowChar returns the arrow character the summary line.
 func arrowChar(fileType detect.Type) rune {
 	switch fileType {
-	case detect.NormalFile:
+	case detect.NormalFile, detect.NonexistentFile:
 		return '-'
-	case detect.UnwritableFile:
+	case detect.UnwritableFile, detect.InaccessibleFile:
 		return '#'
-	case detect.InaccessibleFile:
-		return '#'
-	case detect.NonexistentFile:
-		return '-'
-	case detect.NormalDirectory:
-		return '/'
-	case detect.UnreadableDirectory:
+	case detect.UnreadableDirectory, detect.NormalDirectory:
 		return '/'
 	default:
 		return '?'
