@@ -112,7 +112,7 @@ var _ = Describe("Config", func() {
 
 	Describe("Config.Add", func() {
 		It("can add a target when given an relative path", func() {
-			// add taraget
+			// add target
 			c, err := New(configDir)
 			Expect(err).NotTo(HaveOccurred())
 			err = c.Add("newtarget", "/dingus")
@@ -127,7 +127,7 @@ var _ = Describe("Config", func() {
 		})
 
 		It("can add a target when given an relative path", func() {
-			// add taraget
+			// add target
 			c, err := New(configDir)
 			Expect(err).NotTo(HaveOccurred())
 			err = c.Add("newtarget", "dingus")
