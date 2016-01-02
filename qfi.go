@@ -18,8 +18,8 @@ import (
 const usage = `Usage:
   qfi <target>
     Edit/chdir to a target
-  qfi -a <target> <filename>
-    Add a new target
+  qfi -a [<target>] <filename>
+    Add a new target, name defaults to basename of file
   qfi -m <target> <filename>
     Move a target's destination
   qfi -d <target> [<target> [...]]
