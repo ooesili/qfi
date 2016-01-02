@@ -1,8 +1,7 @@
 package summarize_test
 
 import (
-	"fmt"
-
+	"github.com/fatih/color"
 	"github.com/ooesili/qfi/detect"
 	. "github.com/ooesili/qfi/summarize"
 
@@ -13,21 +12,29 @@ import (
 )
 
 var _ = Describe("Summarize", func() {
+	BeforeEach(func() {
+		// turn off color before each test
+		color.NoColor = true
+	})
+
 	Context("when given a single target", func() {
-		It("displays it's summary", func() {
+		It("displays it's summary with the right color and arrow", func() {
+			color.NoColor = false
+
 			// setup test cases
 			tests := []struct {
 				fileType   detect.Type
 				typeString string
 				arrowChar  rune
+				fgColor    color.Attribute
 			}{
-				{detect.NormalFile, "NormalFile", '-'},
-				{detect.UnwritableFile, "UnwritableFile", '#'},
-				{detect.InaccessibleFile, "InaccessibleFile", '#'},
-				{detect.NonexistentFile, "NonexistentFile", '-'},
-				{detect.NormalDirectory, "NormalDirectory", '/'},
-				{detect.UnreadableDirectory, "UnreadableDirectory", '/'},
-				{detect.UnknownFile, "UnknownFile", '?'},
+				{detect.NormalFile, "NormalFile", '-', color.FgGreen},
+				{detect.UnwritableFile, "UnwritableFile", '#', color.FgYellow},
+				{detect.InaccessibleFile, "InaccessibleFile", '#', color.FgRed},
+				{detect.NonexistentFile, "NonexistentFile", '-', color.FgRed},
+				{detect.NormalDirectory, "NormalDirectory", '/', color.FgBlue},
+				{detect.UnreadableDirectory, "UnreadableDirectory", '/', color.FgRed},
+				{detect.UnknownFile, "UnknownFile", '?', color.FgMagenta},
 			}
 
 			// run tests
@@ -39,10 +46,12 @@ var _ = Describe("Summarize", func() {
 					"/foo/bar": test.fileType,
 				})
 
+				colorSprintf := color.New(test.fgColor).SprintfFunc()
+
 				summarizer := Summarizer{detector, resolver}
 				summary := summarizer.Summary()
 				Expect(summary).To(Equal(
-					fmt.Sprintf("foobar %c> /foo/bar\n", test.arrowChar)),
+					colorSprintf("foobar %c> /foo/bar\n", test.arrowChar)),
 					"when given detect.%s", test.typeString)
 			}
 		})

@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 
+	"github.com/fatih/color"
 	"github.com/ooesili/qfi/detect"
 )
 
@@ -50,11 +51,13 @@ func (s Summarizer) Summary() string {
 			panic("summary: List/Resolve mismatch, cannot resolve: " + target)
 		}
 
-		// find arrow character
-		arrow := arrowChar(s.Detector.Detect(destination))
+		// figure out line styles
+		fileType := s.Detector.Detect(destination)
+		arrow := arrowChar(fileType)
+		colorFunc := colorFor(fileType)
 
 		// add target to the result
-		fmt.Fprintf(result, "%-"+widthStr+"s %c> %s\n",
+		fmt.Fprintf(result, colorFunc("%-"+widthStr+"s %c> %s\n"),
 			target, arrow, destination)
 	}
 
@@ -73,4 +76,25 @@ func arrowChar(fileType detect.Type) rune {
 	default:
 		return '?'
 	}
+}
+
+// colorFor returns a Sprint function that will wrap a string in the color
+// appropriate for the given file type.
+func colorFor(fileType detect.Type) func(a ...interface{}) string {
+	var fgColor color.Attribute
+
+	switch fileType {
+	case detect.NormalFile:
+		fgColor = color.FgGreen
+	case detect.UnwritableFile:
+		fgColor = color.FgYellow
+	case detect.NormalDirectory:
+		fgColor = color.FgBlue
+	case detect.UnreadableDirectory, detect.InaccessibleFile, detect.NonexistentFile:
+		fgColor = color.FgRed
+	default:
+		fgColor = color.FgMagenta
+	}
+
+	return color.New(fgColor).SprintFunc()
 }
