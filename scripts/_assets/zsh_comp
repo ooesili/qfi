@@ -2,59 +2,76 @@
 
 # lists all target names
 _qfi_targets() {
-    local target
-    local -a targets
-    qfi -l 2>/dev/null | while read target; do
-        targets+=$target
-    done
-    _describe -t qfi-targets 'target' targets
+  local target
+  local -a targets
+  qfi -l 2>/dev/null | while read target; do
+    targets+=$target
+  done
+  _describe -t qfi-targets 'target' targets
 }
 
-# "complete" a new target name
+# new target or file
 _qfi_new_target() {
-    _guard "*" 'new target name'
+  _guard "*" 'new target name'
+  _files
 }
 
 # command for each action
 _qfi_cmd_delete() {
-    _arguments -s : \
-        '*: :_qfi_targets'
+  _arguments -s : \
+      '*: :_qfi_targets'
 }
 _qfi_cmd_rename() {
-    _arguments -s : \
-        '2: :_qfi_targets' \
-        '3: :_qfi_new_target' \
+  _arguments -s : \
+      '2: :_qfi_targets' \
+      '3: :_qfi_new_target' \
 }
 _qfi_cmd_list() {
-    _arguments -s : \
-        '2:: :_qfi_targets' \
+  _arguments -s : \
+      '2:: :_qfi_targets' \
 }
 _qfi_cmd_add() {
-    _arguments -s : \
-        '2: :_qfi_new_target' \
-        '3: :_files'
+  _arguments -s : \
+      '2: :_qfi_new_target' \
+      '3: :_files'
 }
 _qfi_cmd_move() {
-    _arguments -s : \
-        '2: :_qfi_targets' \
-        '3: :_files'
+  _arguments -s : \
+      '2: :_qfi_targets' \
+      '3: :_files'
 }
+
+_qfi_cmd_shell() {
+  _arguments -s : \
+      '2: :_qfi_shell_name' \
+      '3: :_qfi_script_type'
+}
+
+_qfi_shell_name() {
+  local -a shells=(bash fish zsh)
+  _describe 'shell' shells
+}
+
+_qfi_script_type() {
+  local -a types=(comp wrapper)
+  _describe 'script type' types
+}
+
 _qfi_none() {
-    _arguments -s : '1: :'
+  _arguments -s : '1: :'
 }
 
 # main dispatcher
 _qfi() {
-    _arguments -S -s : \
-        '-d[delete target]:*: :_qfi_cmd_delete' \
-        '-a[add target]:*: :_qfi_cmd_add' \
-        '-m[move target]:*: :_qfi_cmd_move' \
-        '-r[rename target]:*: :_qfi_cmd_rename' \
-        '-l[list targets]:*: :_qfi_cmd_list' \
-        '-s[show status]:*: :_qfi_none' \
-        '--help[display help]:*: :_qfi_none' \
-        '--version[display version]:*: :_qfi_none' \
-        '(-): :_qfi_targets'
+  _arguments -S -s : \
+      '-d[delete targets]:*: :_qfi_cmd_delete' \
+      '-a[add target]:*: :_qfi_cmd_add' \
+      '-m[move target]:*: :_qfi_cmd_move' \
+      '-r[rename target]:*: :_qfi_cmd_rename' \
+      '-l[list targets]:*: :_qfi_cmd_list' \
+      '-s[show summary]:*: :_qfi_none' \
+      '--shell[print script]:*: :_qfi_cmd_shell' \
+      '(-): :_qfi_targets'
 }
 
 _qfi "$@"

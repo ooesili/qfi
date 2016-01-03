@@ -7,7 +7,7 @@ _qfi_targets() {
 # complete options
 _qfi_opts() {
   local opts
-  opts="-a -d -l -m -r -s --help --version"
+  opts="-a -d -l -m -r -s --shell"
   COMPREPLY=( $(compgen -W "$opts" -- "$1") )
 }
 
@@ -37,9 +37,7 @@ _qfi() {
         fi
         ;;
       -a)
-        if [[ $COMP_CWORD -eq 2 ]]; then
-          _qfi_none
-        elif [[ $COMP_CWORD -eq 3 ]]; then
+        if [[ $COMP_CWORD -eq 2 || $COMP_CWORD -eq 3 ]]; then
           _filedir
         fi
         ;;
@@ -64,6 +62,13 @@ _qfi() {
         ;;
       -s)
         _qfi_none
+        ;;
+      --shell)
+        if [[ $COMP_CWORD -eq 2 ]]; then
+          COMPREPLY=( $(compgen -W "bash fish zsh" -- "$1") )
+        elif [[ $COMP_CWORD -eq 3 ]]; then
+          COMPREPLY=( $(compgen -W "comp wrapper" -- "$1") )
+        fi
         ;;
     esac
   fi

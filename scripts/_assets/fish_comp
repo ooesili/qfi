@@ -1,39 +1,56 @@
-function __fish_complete_qfi_target
-  set cmd (commandline -opc)
-  # only argument
-  if [ (count $cmd) -eq 1 ]
-    return 0
-  end
-  # delete can take multiple targets
-  if [ $cmd[2] = '-d' ]
-    return 0
-  end
-  # complete target once
-  if [ (count $cmd) -eq 2 ]
-    if contains -- $cmd[2] -l -m -r
-      return 0
-    end
-  end
-  return 1
-end
+function __fish_complete_qfi_target;
+  set cmd (commandline -opc);
+  if [ (count $cmd) -eq 1 ];
+    return 0;
+  end;
+  if [ $cmd[2] = '-d' ];
+    return 0;
+  end;
+  if [ (count $cmd) -eq 2 ];
+    if contains -- $cmd[2] -l -m -r;
+      return 0;
+    end;
+  end;
+  return 1;
+end;
 
-function __fish_complete_qfi_firstopt
-  set cmd (commandline -opc)
-  if [ (count $cmd) -eq 1 ]
-    return 0
-  end
-  return 1
-end
+function __fish_complete_qfi_firstopt;
+  set cmd (commandline -opc);
+  if [ (count $cmd) -eq 1 ];
+    return 0;
+  end;
+  return 1;
+end;
 
-# complete a target
-complete -c qfi -f -n __fish_complete_qfi_target -a '(qfi -l ^/dev/null)' -d 'target'
+function __fish_complete_qfi_script_type;
+  set cmd (commandline -opc);
+  if [ (count $cmd) -eq 3 ];
+    if [ $cmd[2] = '--shell' ];
+      return 0;
+    end;
+  end;
+  return 1;
+end;
 
-# complete options
-complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'help'    -d 'display help'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'version' -d 'display version'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'a'       -d 'add target'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'd'       -d 'delete target'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'l'       -d 'list targets'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'm'       -d 'move target'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'r'       -d 'rename target'
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 's'       -d 'show status'
+function __fish_complete_qfi_shell_name;
+  set cmd (commandline -opc);
+  if [ (count $cmd) -eq 2 ];
+    if [ $cmd[2] = '--shell' ];
+      return 0;
+    end;
+  end;
+  return 1;
+end;
+
+complete -c qfi -f -n __fish_complete_qfi_target -a '(qfi -l ^/dev/null)' -d 'target';
+
+complete -c qfi -f -n __fish_complete_qfi_shell_name  -a 'bash fish zsh' -d 'shell';
+complete -c qfi -f -n __fish_complete_qfi_script_type -a 'wrapper comp' -d 'script type';
+
+complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'shell' -d 'print scripts';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'a'     -d 'add target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'd'     -d 'delete target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'l'     -d 'list targets';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'm'     -d 'move target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'r'     -d 'rename target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 's'     -d 'show status';
