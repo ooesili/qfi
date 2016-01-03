@@ -156,8 +156,9 @@ eval (qfi --shell fish comp)
 #### zsh
 Installing zsh is a little more complicated.  Write the completion script to a
 file called `_qfi`, and put that file inside of a directory in your `$FPATH`.
-```bash
-# qfi --shell zsh comp > /usr/share/zsh/site-functions/_qfi
+For example:
+```zsh
+$ qfi --shell zsh comp > /usr/share/zsh/site-functions/_qfi
 ```
 
 
