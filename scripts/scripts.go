@@ -2,7 +2,7 @@
 // binary with go-bindata.
 package scripts
 
-//go:generate go-bindata -pkg scripts _assets
+//go:generate go-bindata -nometadata -pkg scripts _assets
 import (
 	"fmt"
 	"path/filepath"
