@@ -1,2 +1,3 @@
 qfi:
+	go generate ./...
 	go build -ldflags "-X main.version=`git describe --tags`"
