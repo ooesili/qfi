@@ -71,6 +71,8 @@ _qfi() {
       '-l[list targets]:*: :_qfi_cmd_list' \
       '-s[show summary]:*: :_qfi_none' \
       '--shell[print script]:*: :_qfi_cmd_shell' \
+      '--help[display help]:*: :_qfi_none' \
+      '--version[display version]:*: :_qfi_none' \
       '(-): :_qfi_targets'
 }
 

@@ -138,4 +138,14 @@ some  -> %s
 			Expect(err).To(MatchError("exit status 2"))
 		})
 	})
+
+	It("can print the version without returning an error", func() {
+		_, desc, err := qfi("--version")
+		Expect(err).ToNot(HaveOccurred(), desc)
+	})
+
+	It("can print the help message without returning an error", func() {
+		_, desc, err := qfi("--help")
+		Expect(err).ToNot(HaveOccurred(), desc)
+	})
 })

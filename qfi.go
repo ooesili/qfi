@@ -15,6 +15,8 @@ import (
 	"github.com/ooesili/qfi/summarize"
 )
 
+var version = `¯\(°_o)/¯`
+
 const usage = `Usage:
   qfi <target>
     Edit/chdir to a target
@@ -32,6 +34,10 @@ const usage = `Usage:
     Show detailed information on all targets
   qfi --shell (zsh|fish|bash) (comp|wrapper)
     Print completion or wrapper script for a shell
+  qfi --version
+    Display the version
+  qfi --help
+    Display this help message
 `
 
 func main() {
@@ -94,6 +100,8 @@ func realMain() error {
 	dispatcher.Register("-l", &commands.List{cfg, os.Stdout})
 	dispatcher.Register("-s", &commands.Summary{summarizer, os.Stdout})
 	dispatcher.Register("--shell", &commands.Shell{scriptGetter, os.Stdout})
+	dispatcher.Register("--version", &commands.Print{version + "\n", os.Stdout})
+	dispatcher.Register("--help", &commands.Print{usage, os.Stdout})
 	dispatcher.RegisterFallback(&commands.Edit{editor})
 
 	return dispatcher.Run(os.Args[1:])

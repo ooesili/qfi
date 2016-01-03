@@ -47,10 +47,12 @@ complete -c qfi -f -n __fish_complete_qfi_target -a '(qfi -l ^/dev/null)' -d 'ta
 complete -c qfi -f -n __fish_complete_qfi_shell_name  -a 'bash fish zsh' -d 'shell';
 complete -c qfi -f -n __fish_complete_qfi_script_type -a 'wrapper comp' -d 'script type';
 
-complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'shell' -d 'print scripts';
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'a'     -d 'add target';
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'd'     -d 'delete target';
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'l'     -d 'list targets';
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'm'     -d 'move target';
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'r'     -d 'rename target';
-complete -c qfi -f -n __fish_complete_qfi_firstopt -o 's'     -d 'show status';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'help'    -d 'display help';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'version' -d 'display version';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -l 'shell'   -d 'print scripts';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'a'       -d 'add target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'd'       -d 'delete target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'l'       -d 'list targets';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'm'       -d 'move target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 'r'       -d 'rename target';
+complete -c qfi -f -n __fish_complete_qfi_firstopt -o 's'       -d 'show status';

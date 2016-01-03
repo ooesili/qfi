@@ -7,7 +7,7 @@ _qfi_targets() {
 # complete options
 _qfi_opts() {
   local opts
-  opts="-a -d -l -m -r -s --shell"
+  opts="-a -d -l -m -r -s --shell --help --version"
   COMPREPLY=( $(compgen -W "$opts" -- "$1") )
 }
 
@@ -60,7 +60,7 @@ _qfi() {
           _qfi_none
         fi
         ;;
-      -s)
+      -s|--help|--version)
         _qfi_none
         ;;
       --shell)
