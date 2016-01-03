@@ -1,21 +1,37 @@
 qfi [![Build Status](https://travis-ci.org/ooesili/qfi.svg?branch=master)](https://travis-ci.org/ooesili/qfi)
 ====================
 
-### quickly edit commonly used files
+### quickly access commonly used files and directories
 
 
 Introduction
---------------------
+------------
 
 `qfi` is a command line tool for UNIX-like systems, for quickly editing
 commonly used files, and switching to commonly used directories.  This is
 accomplished through the use of **targets**, which are short aliases for files
-and directories.  For a more terse explanation of how `qfi` works, consult the
-manual page.
+and directories.
+
+
+Installation
+------------
+
+### Pre-built
+The easiest way to install qfi is to download a pre-built binary from the
+[releases page][3] for your OS and architecture.  Unzip the binary, and move it
+to a directory in your `$PATH`.  If you can run `qfi` and see the usage message
+, you're good to go.  After that, you'll probably want read below to setup
+directory switching and tab completion for your shell.
+
+### From source
+If you have [Go][4] installed, running `go get github.com/ooesili/qfi` will
+download and install program, although the version will not be set.  To do a
+proper build from source cd into `$GOPATH/src/github.com/ooesili/qfi` and run
+`make`. You'll then see an executable called `qfi` that directory.
 
 
 Description
---------------------
+-----------
 
 ### Motivation
 The reason I created `qfi` is that I found myself editing certain files on my
@@ -24,6 +40,7 @@ seemed awfully redundant.  `qfi` removes some of this redundancy by creating
 shorter names for commonly used files, which I call **targets**.  I also wanted
 to make `qfi` simple and easy to learn so that it wouldn't take more time to
 learn than it would save.
+
 
 ### Targets
 `qfi` maintains a list of **targets** as symbolic links inside of its
@@ -50,20 +67,20 @@ which will open up the given **target** using the following rules:
 
  *  If the file is not writable by you, open the file with `sudoedit`.
 
- *  If the file does not exist, use the longest existing part of it's path, and
-    the rules above, to determine which program to use.
-
 So in this case, the file will be opened with `sudoedit`.
+
 
 ### Configuration Directory
 The configuration directory defaults to `$HOME/.config/qfi`, but
-`$XDG_CONFIG_HOME/qfi` will be used if `$XDG_CONFIG_HOME` is defined.
+`$QFI_CONFIGDIR` will be used if it is defined.
+
 
 ### Options
  *  The `-a` option will add a **target** pointing to the specified
-    file/directory:
+    file/directory.  If only one argument is given, the basename of the file
+    wil be used as the target name:
     ```bash
-    $ qfi -a <target> <filename>
+    $ qfi -a [<target>] <filename>
     ```
 
  *  The `-m` option will move the destination of a **target** to a new
@@ -94,59 +111,79 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
     ```
     Listings are in the following format:
     ```
-    target ?> /path/to/destination
+    target *> /path/to/destination
     ```
-    where the line's color and `?>' are one of the following:
+    where the line's color and `*>' are one of the following:
 
     Symbol | Meaning           | Color
     ------ | ----------------- | ------
     ->     | writable file     | green
     />     | directory         | blue
-    #>     | non-writable file | orange
+    #>     | non-writable file | yellow
+    ?>     | unknown file      | purple
 
     Red lines indicate a non-existent or non-accessible file, or a non chdir-able
     directory.  These files may still be used, but you may encounter problems
     saving them if their parent directories do not exist.
 
+ *  The `--shell` prints wrapper and completion scripts for the supported
+    shells:
+    ```bash
+    $ qfi --shell (zsh|fish|bash) (comp|wrapper)
+    ```
 
  *  The `--help` and `--version` options will display usage and version
     information, respectively.
 
-### Tab-Completion
-`qfi` comes with bash, zsh, and fish tab-completion support for **targets** and
-options.  For bash completion to work, additional software must be installed,
-as specified below.
 
-### Directory-Switching
+### Tab Completion
+`qfi` comes with bash, zsh, and fish tab completion support for **targets** and
+options.  For bash completion to work, [bash-completion][2] must be installed
+on the system.
+
+#### bash
+Put this line into your `~/.bashrc`:
+```bash
+eval "$(qfi --shell bash comp)"
+```
+
+#### fish
+Put this line into your `~/.config/fish/config.fish`:
+```fish
+eval (qfi --shell fish comp)
+```
+
+#### zsh
+Installing zsh is a little more complicated.  Write the completion script to a
+file called `_qfi`, and put that file inside of a directory in your `$FPATH`.
+```bash
+# qfi --shell zsh comp > /usr/share/zsh/site-functions/_qfi
+```
+
+
+### Directory Switching
 `qfi` allows targets to point to directories, in which case your shell will
-`cd` into the directory.  To properly enable this feature, view the
-instructions in the `INSTALL` file, or manual page.  This feature was largely
-inspired by [autojump][1], which is a very cool piece of software with similar
-functionality.
+`cd` into the directory.  This feature was largely inspired by [autojump][1],
+which is a very cool piece of software with similar functionality. The
+following commands will setup directory switching for your shell:
 
+bash:
+```bash
+eval "$(qfi --shell bash wrapper)"
+```
 
-Dependencies
---------------------
+fish:
+```fish
+eval (qfi --shell fish wrapper)
+```
 
-#### Perl
-`qfi` depends on Perl, as it is written the language.
-
-#### sudo
-`qfi` depends on `sudoedit` to open files owned by other users.  In the future,
-I *could* make this an optional dependency and just open the file with the
-normal editor if `sudoedit` couldn't be found.  Tell me if you would like this
-feature.
-
-#### bash-completion
-This one is optional.  `qfi` can provide bash tab-completion support for
-**targets** and options if the [bash-completion][2] software is installed.
-
-Distribution Packages
----------------------
-
- *  Arch Linux: [qfi][3] (AUR)
+zsh:
+```zsh
+eval "$(qfi --shell zsh wrapper)"
+```
 
 
 [1]: https://github.com/joelthelion/autojump
 [2]: http://bash-completion.alioth.debian.org/
-[3]: https://aur.archlinux.org/packages/qfi/
+[3]: https://github.com/ooesili/qfi/releases
+[4]: https://golang.org
