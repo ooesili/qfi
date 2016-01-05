@@ -12,36 +12,6 @@ commonly used files, and switching to commonly used directories.  This is
 accomplished through the use of **targets**, which are short aliases for files
 and directories.
 
-
-Installation
-------------
-
-### Pre-built
-The easiest way to install qfi is to download a pre-built binary from the
-[releases page][3] for your OS and architecture.  Unzip the binary, and move it
-to a directory in your `$PATH`.  If you can run `qfi` and see the usage message
-, you're good to go.  After that, you'll probably want read below to setup
-directory switching and tab completion for your shell.
-
-### From source
-If you have [Go][4] installed, running `go get github.com/ooesili/qfi` will
-download and install program, although the version will not be set.  To do a
-proper build from source cd into `$GOPATH/src/github.com/ooesili/qfi` and run
-`make`. You'll then see an executable called `qfi` that directory.
-
-
-Description
------------
-
-### Motivation
-The reason I created `qfi` is that I found myself editing certain files on my
-system quite often, and typing out the paths to these files over and over again
-seemed awfully redundant.  `qfi` removes some of this redundancy by creating
-shorter names for commonly used files, which I call **targets**.  I also wanted
-to make `qfi` simple and easy to learn so that it wouldn't take more time to
-learn than it would save.
-
-
 ### Targets
 `qfi` maintains a list of **targets** as symbolic links inside of its
 configuration directory.  To add a **target**, we call `qfi` with the `-a`
@@ -70,10 +40,25 @@ which will open up the given **target** using the following rules:
 So in this case, the file will be opened with `sudoedit`.
 
 
-### Configuration Directory
-The configuration directory defaults to `$HOME/.config/qfi`, but
-`$QFI_CONFIGDIR` will be used if it is defined.
+Installation
+------------
 
+### Pre-built
+The easiest way to install qfi is to download a pre-built binary from the
+[releases page][3] for your OS and architecture.  Unzip the binary, and move it
+to a directory in your `$PATH`.  If you can run `qfi` and see the usage message
+, you're good to go.  After that, you'll probably want read below to setup
+directory switching and tab completion for your shell.
+
+### From source
+If you have [Go][4] installed, running `go get github.com/ooesili/qfi` will
+download and install program, although the version will not be set.  To do a
+proper build from source cd into `$GOPATH/src/github.com/ooesili/qfi` and run
+`make`. You'll then see an executable called `qfi` that directory.
+
+
+Description
+-----------
 
 ### Options
  *  The `-a` option will add a **target** pointing to the specified
@@ -135,6 +120,9 @@ The configuration directory defaults to `$HOME/.config/qfi`, but
  *  The `--help` and `--version` options will display usage and version
     information, respectively.
 
+### Configuration Directory
+The configuration directory defaults to `$HOME/.config/qfi`, but
+`$QFI_CONFIGDIR` will be used if it is defined.
 
 ### Tab Completion
 `qfi` comes with bash, zsh, and fish tab completion support for **targets** and
@@ -182,6 +170,16 @@ zsh:
 ```zsh
 eval "$(qfi --shell zsh wrapper)"
 ```
+
+
+Motivation
+----------
+The reason I created `qfi` is that I found myself editing certain files on my
+system quite often, and typing out the paths to these files over and over again
+seemed awfully redundant.  `qfi` removes some of this redundancy by creating
+shorter names for commonly used files, which I call **targets**.  I also wanted
+to make `qfi` simple and easy to learn so that it wouldn't take more time to
+learn than it would save.
 
 
 [1]: https://github.com/joelthelion/autojump
