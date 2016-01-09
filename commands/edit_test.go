@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -26,10 +27,10 @@ var _ = Describe("Edit", func() {
 	})
 
 	Context("with one argument", func() {
-		It("calls driver.Edit", func() {
+		It("calls Driver.Edit", func() {
+			driver.When("Edit", "foobar")
 			err := cmd.Run([]string{"foobar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.name).To(Equal("foobar"))
 		})
 	})
 
@@ -41,11 +42,9 @@ var _ = Describe("Edit", func() {
 	})
 })
 
-type mockEditDriver struct {
-	name string
-}
+type mockEditDriver struct{ mock.Mock }
 
 func (d *mockEditDriver) Edit(name string) error {
-	d.name = name
-	return nil
+	ret := d.Called(name)
+	return ret.Error(0)
 }

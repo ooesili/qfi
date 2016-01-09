@@ -2,8 +2,8 @@ package commands_test
 
 import (
 	"bytes"
-	"fmt"
 
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -18,15 +18,14 @@ var _ = Describe("List", func() {
 	)
 
 	BeforeEach(func() {
-		driver = &mockListDriver{
-			targets: []string{"bizbaz", "foobar", "qux"},
-		}
+		driver = &mockListDriver{}
 		logger = &bytes.Buffer{}
 		cmd = List{driver, logger}
 	})
 
 	Context("with no arguments", func() {
 		It("calls driver.List and prints the results", func() {
+			driver.When("List").Return([]string{"bizbaz", "foobar", "qux"})
 			err := cmd.Run([]string{})
 			Expect(err).ToNot(HaveOccurred())
 			Expect(logger.String()).To(Equal("bizbaz\nfoobar\nqux\n"))
@@ -35,9 +34,10 @@ var _ = Describe("List", func() {
 
 	Context("with one argument", func() {
 		It("calls driver.Resolve and prints the results", func() {
+			driver.When("Resolve", "foobar").Return("/foo/bar")
 			err := cmd.Run([]string{"foobar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(logger.String()).To(Equal("/path/to/foobar\n"))
+			Expect(logger.String()).To(Equal("/foo/bar\n"))
 		})
 	})
 
@@ -49,14 +49,14 @@ var _ = Describe("List", func() {
 	})
 })
 
-type mockListDriver struct {
-	targets []string
-}
+type mockListDriver struct{ mock.Mock }
 
 func (d *mockListDriver) List() []string {
-	return d.targets
+	ret := d.Called()
+	return ret.Get(0).([]string)
 }
 
 func (d *mockListDriver) Resolve(name string) (string, error) {
-	return fmt.Sprintf("/path/to/%s", name), nil
+	ret := d.Called(name)
+	return ret.String(0), ret.Error(1)
 }

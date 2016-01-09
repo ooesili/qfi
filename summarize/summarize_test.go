@@ -2,10 +2,9 @@ package summarize_test
 
 import (
 	"github.com/fatih/color"
+	"github.com/maraino/go-mock"
 	"github.com/ooesili/qfi/detect"
 	. "github.com/ooesili/qfi/summarize"
-
-	"sort"
 
 	. "github.com/onsi/ginkgo"
 	. "github.com/onsi/gomega"
@@ -39,12 +38,11 @@ var _ = Describe("Summarize", func() {
 
 			// run tests
 			for _, test := range tests {
-				resolver := mockResolver(map[string]string{
-					"foobar": "/foo/bar",
-				})
-				detector := mockDetector(map[string]detect.Type{
-					"/foo/bar": test.fileType,
-				})
+				resolver := &mockResolver{}
+				detector := &mockDetector{}
+				resolver.When("List").Return([]string{"foobar"})
+				resolver.When("Resolve", "foobar").Return("/foo/bar")
+				detector.When("Detect", "/foo/bar").Return(test.fileType)
 
 				colorSprintf := color.New(test.fgColor).SprintfFunc()
 
@@ -59,16 +57,15 @@ var _ = Describe("Summarize", func() {
 
 	Context("when given multiple targets", func() {
 		It("aligns the output into columns", func() {
-			resolver := mockResolver(map[string]string{
-				"short":   "/foo/bar",
-				"longer":  "/biz/baz",
-				"longest": "/foo/bar/qux",
-			})
-			detector := mockDetector(map[string]detect.Type{
-				"/foo/bar":     detect.NormalDirectory,
-				"/biz/baz":     detect.UnwritableFile,
-				"/foo/bar/qux": detect.NormalFile,
-			})
+			resolver := &mockResolver{}
+			detector := &mockDetector{}
+			resolver.When("List").Return([]string{"longer", "longest", "short"})
+			resolver.When("Resolve", "longer").Return("/biz/baz")
+			resolver.When("Resolve", "longest").Return("/foo/bar/qux")
+			resolver.When("Resolve", "short").Return("/foo/bar")
+			detector.When("Detect", "/biz/baz").Return(detect.UnwritableFile)
+			detector.When("Detect", "/foo/bar/qux").Return(detect.NormalFile)
+			detector.When("Detect", "/foo/bar").Return(detect.NormalDirectory)
 
 			summarizer := Summarizer{detector, resolver}
 			summary := summarizer.Summary()
@@ -82,25 +79,21 @@ short   /> /foo/bar
 	})
 })
 
-type mockResolver map[string]string
+type mockResolver struct{ mock.Mock }
 
-func (r mockResolver) List() []string {
-	result := make([]string, len(r))
-	i := 0
-	for name := range r {
-		result[i] = name
-		i++
-	}
-	sort.Strings(result)
-	return result
+func (r *mockResolver) List() []string {
+	ret := r.Called()
+	return ret.Get(0).([]string)
 }
 
-func (r mockResolver) Resolve(name string) (string, error) {
-	return r[name], nil
+func (r *mockResolver) Resolve(name string) (string, error) {
+	ret := r.Called(name)
+	return ret.String(0), ret.Error(1)
 }
 
-type mockDetector map[string]detect.Type
+type mockDetector struct{ mock.Mock }
 
-func (d mockDetector) Detect(path string) detect.Type {
-	return d[path]
+func (d *mockDetector) Detect(path string) detect.Type {
+	ret := d.Called(path)
+	return ret.Get(0).(detect.Type)
 }

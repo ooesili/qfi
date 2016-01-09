@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -34,10 +35,9 @@ var _ = Describe("Rename", func() {
 
 	Context("with exactly two arguments", func() {
 		It("calls Driver.Rename", func() {
+			driver.When("Rename", "foobar", "boofar")
 			err := cmd.Run([]string{"foobar", "boofar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.name).To(Equal("foobar"))
-			Expect(driver.newName).To(Equal("boofar"))
 		})
 	})
 
@@ -49,13 +49,9 @@ var _ = Describe("Rename", func() {
 	})
 })
 
-type mockRenameDriver struct {
-	name    string
-	newName string
-}
+type mockRenameDriver struct{ mock.Mock }
 
 func (d *mockRenameDriver) Rename(name, newName string) error {
-	d.name = name
-	d.newName = newName
-	return nil
+	ret := d.Called(name, newName)
+	return ret.Error(0)
 }

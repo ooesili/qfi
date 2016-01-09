@@ -1,6 +1,7 @@
 package edit_test
 
 import (
+	"github.com/maraino/go-mock"
 	"github.com/ooesili/qfi/detect"
 	. "github.com/ooesili/qfi/edit"
 
@@ -11,22 +12,20 @@ import (
 var _ = Describe("Edit", func() {
 	Context("when given a normal file", func() {
 		It("calls the detector and resolver with the right args", func() {
-			detector := &mockDetector{fileType: detect.NormalFile}
+			resolver := &mockResolver{}
+			detector := &mockDetector{}
 			executor := &mockExecutor{}
-			resolver := &mockResolver{destination: "/foo/bar"}
+			resolver.When("Resolve", "foobar").Return("/foo/bar")
+			detector.When("Detect", "/foo/bar").Return(detect.NormalFile)
+			executor.When("Exec", "vim", []string{"/foo/bar"})
 
 			editor := Editor{"vim", detector, executor, resolver}
 			err := editor.Edit("foobar")
 			Expect(err).ToNot(HaveOccurred())
-
-			Expect(resolver.calledName).To(Equal("foobar"))
-			Expect(detector.calledPath).To(Equal("/foo/bar"))
-			Expect(executor.calledName).To(Equal("vim"))
-			Expect(executor.calledArgs).To(Equal([]string{"/foo/bar"}))
 		})
 	})
 
-	Context("when the resolver returns a file type", func() {
+	Context("when the resolver returns a specific file type", func() {
 		It("executes the correct editor", func() {
 			destination := "/biz/baz"
 			tests := []struct {
@@ -46,20 +45,17 @@ var _ = Describe("Edit", func() {
 			}
 
 			for _, test := range tests {
-				detector := &mockDetector{fileType: test.fileType}
+				detector := &mockDetector{}
 				executor := &mockExecutor{}
-				resolver := &mockResolver{destination: destination}
+				resolver := &mockResolver{}
+				resolver.When("Resolve", "foobar").Return(destination)
+				detector.When("Detect", destination).Return(test.fileType)
+				executor.When("Exec", test.commandName, test.commandArgs)
 
 				editor := Editor{"emacs", detector, executor, resolver}
 				err := editor.Edit("foobar")
 				Expect(err).ToNot(HaveOccurred(),
 					"Edit should not fail for %s", test.typeString)
-
-				Expect(executor.calledName).To(Equal(test.commandName),
-					"should run %s when given %s", test.commandName, test.typeString)
-
-				Expect(executor.calledArgs).To(Equal(test.commandArgs),
-					"args should match when given %s", test.typeString)
 			}
 		})
 	})
@@ -75,9 +71,11 @@ var _ = Describe("Edit", func() {
 			}
 
 			for _, test := range tests {
-				detector := &mockDetector{fileType: test.fileType}
+				detector := &mockDetector{}
 				executor := &mockExecutor{}
-				resolver := &mockResolver{destination: "/foo/bar"}
+				resolver := &mockResolver{}
+				resolver.When("Resolve", "foobar").Return("/foo/bar")
+				detector.When("Detect", "/foo/bar").Return(test.fileType)
 
 				editor := Editor{"vim", detector, executor, resolver}
 				err := editor.Edit("foobar")
@@ -89,9 +87,11 @@ var _ = Describe("Edit", func() {
 
 	Context("when the resolver returns UnknownFile", func() {
 		It("should return an error", func() {
-			detector := &mockDetector{fileType: detect.UnknownFile}
+			detector := &mockDetector{}
 			executor := &mockExecutor{}
-			resolver := &mockResolver{destination: "/foo/bar"}
+			resolver := &mockResolver{}
+			resolver.When("Resolve", "foobar").Return("/foo/bar")
+			detector.When("Detect", "/foo/bar").Return(detect.UnknownFile)
 
 			editor := Editor{"vim", detector, executor, resolver}
 			err := editor.Edit("foobar")
@@ -100,33 +100,23 @@ var _ = Describe("Edit", func() {
 	})
 })
 
-type mockDetector struct {
-	calledPath string
-	fileType   detect.Type
-}
+type mockDetector struct{ mock.Mock }
 
 func (d *mockDetector) Detect(path string) detect.Type {
-	d.calledPath = path
-	return d.fileType
+	ret := d.Called(path)
+	return ret.Get(0).(detect.Type)
 }
 
-type mockResolver struct {
-	calledName  string
-	destination string
+type mockResolver struct{ mock.Mock }
+
+func (r *mockResolver) Resolve(name string) (string, error) {
+	ret := r.Called(name)
+	return ret.String(0), ret.Error(1)
 }
 
-func (d *mockResolver) Resolve(name string) (string, error) {
-	d.calledName = name
-	return d.destination, nil
-}
-
-type mockExecutor struct {
-	calledName string
-	calledArgs []string
-}
+type mockExecutor struct{ mock.Mock }
 
 func (e *mockExecutor) Exec(name string, args ...string) error {
-	e.calledName = name
-	e.calledArgs = args
-	return nil
+	ret := e.Called(name, args)
+	return ret.Error(0)
 }

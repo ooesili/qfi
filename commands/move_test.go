@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -34,10 +35,9 @@ var _ = Describe("Move", func() {
 
 	Context("with exactly two arguments", func() {
 		It("calls Driver.Move", func() {
+			driver.When("Move", "foobar", "/foo/bar")
 			err := cmd.Run([]string{"foobar", "/foo/bar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.name).To(Equal("foobar"))
-			Expect(driver.destination).To(Equal("/foo/bar"))
 		})
 	})
 
@@ -49,13 +49,9 @@ var _ = Describe("Move", func() {
 	})
 })
 
-type mockMoveDriver struct {
-	name        string
-	destination string
-}
+type mockMoveDriver struct{ mock.Mock }
 
 func (d *mockMoveDriver) Move(name, destination string) error {
-	d.name = name
-	d.destination = destination
-	return nil
+	ret := d.Called(name, destination)
+	return ret.Error(0)
 }

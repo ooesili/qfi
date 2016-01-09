@@ -3,6 +3,7 @@ package commands_test
 import (
 	"bytes"
 
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -17,7 +18,7 @@ var _ = Describe("Shell", func() {
 	)
 
 	BeforeEach(func() {
-		driver = &mockShellDriver{out: []byte("cool script, brah\n")}
+		driver = &mockShellDriver{}
 		logger = &bytes.Buffer{}
 		cmd = Shell{driver, logger}
 	})
@@ -38,10 +39,10 @@ var _ = Describe("Shell", func() {
 
 	Context("with exactly two arguments", func() {
 		It("calls Driver.GetScript and prints the results", func() {
+			driver.When("GetScript", "zsh", "comp").
+				Return([]byte("cool script, brah\n"))
 			err := cmd.Run([]string{"zsh", "comp"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.calledShell).To(Equal("zsh"))
-			Expect(driver.calledScriptType).To(Equal("comp"))
 			Expect(logger.String()).To(Equal("cool script, brah\n"))
 		})
 	})
@@ -54,14 +55,9 @@ var _ = Describe("Shell", func() {
 	})
 })
 
-type mockShellDriver struct {
-	calledShell      string
-	calledScriptType string
-	out              []byte
-}
+type mockShellDriver struct{ mock.Mock }
 
 func (d *mockShellDriver) GetScript(shell, scriptType string) ([]byte, error) {
-	d.calledShell = shell
-	d.calledScriptType = scriptType
-	return d.out, nil
+	ret := d.Called(shell, scriptType)
+	return ret.Bytes(0), ret.Error(1)
 }

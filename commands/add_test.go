@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -27,19 +28,17 @@ var _ = Describe("Add", func() {
 
 	Context("with exactly one argument", func() {
 		It("uses the basename of the argument as the target", func() {
+			driver.When("Add", "baz", "/biz/baz")
 			err := cmd.Run([]string{"/biz/baz"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.name).To(Equal("baz"))
-			Expect(driver.destination).To(Equal("/biz/baz"))
 		})
 	})
 
 	Context("with exactly two arguments", func() {
 		It("calls Driver.Add with the two arguments", func() {
+			driver.When("Add", "foobar", "/foo/bar")
 			err := cmd.Run([]string{"foobar", "/foo/bar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.name).To(Equal("foobar"))
-			Expect(driver.destination).To(Equal("/foo/bar"))
 		})
 	})
 
@@ -51,13 +50,9 @@ var _ = Describe("Add", func() {
 	})
 })
 
-type mockAddDriver struct {
-	name        string
-	destination string
-}
+type mockAddDriver struct{ mock.Mock }
 
 func (d *mockAddDriver) Add(name, destination string) error {
-	d.name = name
-	d.destination = destination
-	return nil
+	ret := d.Called(name, destination)
+	return ret.Error(1)
 }

@@ -3,6 +3,7 @@ package commands_test
 import (
 	"bytes"
 
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -24,6 +25,7 @@ var _ = Describe("Summary", func() {
 
 	Context("with no arguments", func() {
 		It("returns an error", func() {
+			driver.When("Summary").Return("mockSummaryDriver.Summary was here")
 			err := cmd.Run([]string{})
 			Expect(err).ToNot(HaveOccurred())
 			Expect(logger.String()).To(Equal("mockSummaryDriver.Summary was here"))
@@ -38,8 +40,9 @@ var _ = Describe("Summary", func() {
 	})
 })
 
-type mockSummaryDriver struct{}
+type mockSummaryDriver struct{ mock.Mock }
 
-func (mockSummaryDriver) Summary() string {
-	return "mockSummaryDriver.Summary was here"
+func (d *mockSummaryDriver) Summary() string {
+	ret := d.Called()
+	return ret.String(0)
 }

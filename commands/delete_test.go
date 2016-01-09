@@ -1,6 +1,7 @@
 package commands_test
 
 import (
+	"github.com/maraino/go-mock"
 	. "github.com/ooesili/qfi/commands"
 
 	. "github.com/onsi/ginkgo"
@@ -26,36 +27,33 @@ var _ = Describe("Delete", func() {
 	})
 
 	Context("with exactly one argument", func() {
-		It("calls Config.Delete", func() {
+		It("calls Driver.Delete", func() {
+			driver.When("Delete", []string{"foobar"})
 			err := cmd.Run([]string{"foobar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.names).To(Equal([]string{"foobar"}))
 		})
 	})
 
 	Context("with exactly two arguments", func() {
 		It("calls Driver.Delete", func() {
+			driver.When("Delete", []string{"foobar", "bizbaz"})
 			err := cmd.Run([]string{"foobar", "bizbaz"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.names).To(Equal([]string{"foobar", "bizbaz"}))
 		})
 	})
 
 	Context("with more than two arguments", func() {
 		It("calls Driver.Delete", func() {
+			driver.When("Delete", []string{"foobar", "bizbaz", "qux", "boofar"})
 			err := cmd.Run([]string{"foobar", "bizbaz", "qux", "boofar"})
 			Expect(err).ToNot(HaveOccurred())
-			Expect(driver.names).To(Equal(
-				[]string{"foobar", "bizbaz", "qux", "boofar"}))
 		})
 	})
 })
 
-type mockDeleteDriver struct {
-	names []string
-}
+type mockDeleteDriver struct{ mock.Mock }
 
 func (d *mockDeleteDriver) Delete(names ...string) error {
-	d.names = names
-	return nil
+	ret := d.Called(names)
+	return ret.Error(0)
 }
