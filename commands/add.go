@@ -24,15 +24,12 @@ func (a *Add) Run(args []string) error {
 		return ErrTooManyArgs
 	}
 
-	// figure out name and destination
-	var name, destination string
-	if len(args) == 1 {
-		destination = args[0]
-		name = filepath.Base(destination)
-	} else {
-		name = args[0]
-		destination = args[1]
-	}
+	return a.Driver.Add(a.parseArgs(args))
+}
 
-	return a.Driver.Add(name, destination)
+func (Add) parseArgs(args []string) (name string, destination string) {
+	if len(args) == 1 {
+		return filepath.Base(args[0]), args[0]
+	}
+	return args[0], args[1]
 }

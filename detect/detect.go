@@ -23,33 +23,45 @@ type Detector struct{}
 
 // Detect returns a Type based on the given path.
 func (Detector) Detect(path string) Type {
-	// try to stat file
 	stat, err := os.Stat(path)
 	if err != nil {
-		if os.IsPermission(err) {
-			return InaccessibleFile
-		}
-		if os.IsNotExist(err) {
-			return NonexistentFile
-		}
-		return UnknownFile
+		return handleStatErr(err)
 	}
-
 	if stat.IsDir() {
-		// see if we can open the directory
-		if fi, err := os.Open(path); err == nil {
-			fi.Close()
-			return NormalDirectory
-		}
-		return UnreadableDirectory
+		return handleDirectory(path)
 	}
+	return handleFile(path)
+}
 
-	// normal, writable file
-	if fi, err := os.OpenFile(path, os.O_WRONLY, 0); err == nil {
+func handleStatErr(err error) Type {
+	if os.IsPermission(err) {
+		return InaccessibleFile
+	}
+	if os.IsNotExist(err) {
+		return NonexistentFile
+	}
+	return UnknownFile
+}
+
+func handleDirectory(path string) Type {
+	if fi, err := os.Open(path); err == nil {
 		fi.Close()
+		return NormalDirectory
+	}
+	return UnreadableDirectory
+}
+
+func handleFile(path string) Type {
+	if isNormalFile(path) {
 		return NormalFile
 	}
-
-	// cannot open file for writing
 	return UnwritableFile
+}
+
+func isNormalFile(path string) bool {
+	if fi, err := os.OpenFile(path, os.O_WRONLY, 0); err == nil {
+		fi.Close()
+		return true
+	}
+	return false
 }

@@ -40,36 +40,30 @@ type Editor struct {
 // Edit uses the Executor to call the appropriate command, or return a
 // WrapperShouldChdirError in case the the destination is a directory.
 func (e Editor) Edit(name string) error {
-	// resolve target
 	destination, err := e.Resolver.Resolve(name)
 	if err != nil {
 		return err
 	}
-
-	var command string
-	args := make([]string, 0, 2)
-
-	// figure out which command to use
-	fileType := e.Detector.Detect(destination)
-	switch fileType {
-
-	// files
-	case detect.NormalFile, detect.NonexistentFile:
-		command = e.NormalEditor
-	case detect.UnwritableFile, detect.InaccessibleFile:
-		command = "sudo"
-		args = append(args, "-e")
-
-	// directories
-	case detect.NormalDirectory, detect.UnreadableDirectory:
-		return ErrWrapperShouldChdir
-
-	// UnknownFile
-	default:
-		return fmt.Errorf("unknown file type for: %s", destination)
+	command, args, err := e.getEditorCommand(destination)
+	if err != nil {
+		return err
 	}
-
-	// run the editor
-	args = append(args, destination)
 	return e.Executor.Exec(command, args...)
+}
+
+func (e Editor) getEditorCommand(path string) (string, []string, error) {
+	switch e.Detector.Detect(path) {
+
+	case detect.NormalFile, detect.NonexistentFile:
+		return e.NormalEditor, []string{path}, nil
+
+	case detect.UnwritableFile, detect.InaccessibleFile:
+		return "sudo", []string{"-e", path}, nil
+
+	case detect.NormalDirectory, detect.UnreadableDirectory:
+		return "", nil, ErrWrapperShouldChdir
+
+	default: // UnknownFile or invalid detect.Type
+		return "", nil, fmt.Errorf("unknown file type for: %s", path)
+	}
 }

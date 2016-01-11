@@ -32,40 +32,46 @@ type Summarizer struct {
 
 // Summary retuns a the summary of all targets in the Resolver.
 func (s Summarizer) Summary() string {
-	result := &bytes.Buffer{}
 	targets := s.Resolver.List()
+	width := strconv.Itoa(lengthOfLongestString(targets))
 
-	// figure width of first column
-	width := 0
+	result := &bytes.Buffer{}
 	for _, target := range targets {
-		if len(target) > width {
-			width = len(target)
-		}
-	}
-	widthStr := strconv.Itoa(width)
-
-	for _, target := range targets {
-		// resolve target
-		destination, err := s.Resolver.Resolve(target)
-		if err != nil {
-			panic("summary: List/Resolve mismatch, cannot resolve: " + target)
-		}
-
-		// figure out line styles
-		fileType := s.Detector.Detect(destination)
-		arrow := arrowChar(fileType)
-		colorFunc := colorFor(fileType)
-
-		// add target to the result
-		fmt.Fprintf(result, colorFunc("%-"+widthStr+"s %c> %s\n"),
-			target, arrow, destination)
+		line := s.getSummaryLine(target, width)
+		fmt.Fprintln(result, line)
 	}
 
 	return result.String()
 }
 
-// arrowChar returns the arrow character the summary line.
-func arrowChar(fileType detect.Type) rune {
+func (s Summarizer) getSummaryLine(target string, width string) string {
+	destination, err := s.Resolver.Resolve(target)
+	if err != nil {
+		panic("summary: List/Resolve mismatch, cannot resolve: " + target)
+	}
+	arrow, colorFunc := s.getSummaryLineStyles(destination)
+	return fmt.Sprintf(colorFunc("%-"+width+"s %c> %s"),
+		target, arrow, destination)
+}
+
+func (s Summarizer) getSummaryLineStyles(path string) (rune, func(a ...interface{}) string) {
+	fileType := s.Detector.Detect(path)
+	arrow := arrowCharForFileType(fileType)
+	colorFunc := colorForFileType(fileType)
+	return arrow, colorFunc
+}
+
+func lengthOfLongestString(strs []string) int {
+	width := 0
+	for _, str := range strs {
+		if len(str) > width {
+			width = len(str)
+		}
+	}
+	return width
+}
+
+func arrowCharForFileType(fileType detect.Type) rune {
 	switch fileType {
 	case detect.NormalFile, detect.NonexistentFile:
 		return '-'
@@ -78,9 +84,7 @@ func arrowChar(fileType detect.Type) rune {
 	}
 }
 
-// colorFor returns a Sprint function that will wrap a string in the color
-// appropriate for the given file type.
-func colorFor(fileType detect.Type) func(a ...interface{}) string {
+func colorForFileType(fileType detect.Type) func(a ...interface{}) string {
 	var fgColor color.Attribute
 
 	switch fileType {

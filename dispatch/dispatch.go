@@ -50,26 +50,20 @@ func (d *Dispatcher) RegisterFallback(command Command) {
 // default command was registered, in which case it will be run with all given
 // args.
 func (d *Dispatcher) Run(args []string) error {
-	// make sure at least one arg was given
 	if len(args) < 1 {
-		if d.defaultCommand != nil {
-			return d.defaultCommand.Run(args)
-		}
-		return ErrNoArgs
+		return d.tryDefaultOrFail(args, ErrNoArgs)
 	}
-
-	// try to find a registered command that matches
 	if command, ok := d.commands[args[0]]; ok {
 		return command.Run(args[1:])
 	}
+	return d.tryDefaultOrFail(args, ErrNotFound)
+}
 
-	// try to use the default command
-	if d.defaultCommand != nil {
-		return d.defaultCommand.Run(args)
+func (d *Dispatcher) tryDefaultOrFail(args []string, err error) error {
+	if d.defaultCommand == nil {
+		return err
 	}
-
-	// nothing worked
-	return ErrNotFound
+	return d.defaultCommand.Run(args)
 }
 
 // Command is a subcommand of the main application.

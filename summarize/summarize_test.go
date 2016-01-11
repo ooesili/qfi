@@ -49,7 +49,7 @@ var _ = Describe("Summarize", func() {
 				summarizer := Summarizer{detector, resolver}
 				summary := summarizer.Summary()
 				Expect(summary).To(Equal(
-					colorSprintf("foobar %c> /foo/bar\n", test.arrowChar)),
+					colorSprintf("foobar %c> /foo/bar", test.arrowChar)+"\n"),
 					"when given detect.%s", test.typeString)
 			}
 		})

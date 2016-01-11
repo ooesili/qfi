@@ -22,29 +22,36 @@ type Scripts struct{}
 
 // GetScript returns the script flie for the given shell and type.
 func (s Scripts) GetScript(shell, scriptType string) ([]byte, error) {
-	// make sure the shell is supported
+	if err := ensureShellSupport(shell); err != nil {
+		return nil, err
+	}
+	if err := ensureValidScriptType(scriptType); err != nil {
+		return nil, err
+	}
+	path := getAssetPath(shell, scriptType)
+	return Asset(path)
+}
+
+func ensureShellSupport(shell string) error {
 	for _, supportedShell := range SupportedShells {
 		if supportedShell == shell {
-			goto supported
+			return nil
 		}
 	}
-	return nil, fmt.Errorf("unsupported shell: %s", shell)
+	return fmt.Errorf("unsupported shell: %s", shell)
+}
 
-supported:
-	// validate script type
+func ensureValidScriptType(scriptType string) error {
 	if !(scriptType == "comp" || scriptType == "wrapper") {
-		return nil, fmt.Errorf("invalid script type: %s", scriptType)
+		return fmt.Errorf("invalid script type: %s", scriptType)
 	}
+	return nil
+}
 
-	// assemble file name
+func getAssetPath(shell, scriptType string) string {
 	fileName := shell + "_" + scriptType
-
-	// check for alias
 	if alias, ok := aliases[fileName]; ok {
 		fileName = alias
 	}
-
-	// get asset
-	path := filepath.Join("_assets", fileName)
-	return Asset(path)
+	return filepath.Join("_assets", fileName)
 }

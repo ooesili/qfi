@@ -42,44 +42,24 @@ const usage = `Usage:
 
 func main() {
 	if err := realMain(); err != nil {
-		// exit with status 2 and print nothing if wrapper should chdir
 		if err == edit.ErrWrapperShouldChdir {
 			os.Exit(2)
 		}
-
-		// print error message
 		fmt.Printf("qfi: %s\n", err)
-
-		// print usage info is this is a UsageError
 		if _, ok := err.(dispatch.UsageError); ok {
 			fmt.Print(usage)
 		}
-
 		os.Exit(1)
 	}
 }
 
 func realMain() error {
-
-	// figure out config dir
-	var configDir string
-	if qfiHome := os.Getenv("QFI_CONFIGDIR"); qfiHome != "" {
-		configDir = qfiHome
-	} else if home := os.Getenv("HOME"); home != "" {
-		configDir = filepath.Join(home, ".config", "qfi")
-	} else {
-		return errors.New("neither $QFI_CONFIGDIR nor $HOME are set")
+	configDir, err := getConfigDir()
+	if err != nil {
+		return err
 	}
+	editorCmd := getEditor()
 
-	// figure out editor
-	var editorCmd string
-	if envEditor := os.Getenv("EDITOR"); envEditor != "" {
-		editorCmd = envEditor
-	} else {
-		editorCmd = "vi"
-	}
-
-	// initialize configuration
 	cfg, err := config.New(configDir)
 	if err != nil {
 		return err
@@ -105,4 +85,21 @@ func realMain() error {
 	dispatcher.RegisterFallback(&commands.Edit{editor})
 
 	return dispatcher.Run(os.Args[1:])
+}
+
+func getConfigDir() (string, error) {
+	if qfiHome := os.Getenv("QFI_CONFIGDIR"); qfiHome != "" {
+		return qfiHome, nil
+	}
+	if home := os.Getenv("HOME"); home != "" {
+		return filepath.Join(home, ".config", "qfi"), nil
+	}
+	return "", errors.New("neither $QFI_CONFIGDIR nor $HOME are set")
+}
+
+func getEditor() string {
+	if envEditor := os.Getenv("EDITOR"); envEditor != "" {
+		return envEditor
+	}
+	return "vi"
 }

@@ -16,24 +16,28 @@ type List struct {
 }
 
 func (l List) Run(args []string) error {
-	// print all targets
 	if len(args) == 0 {
-		for _, target := range l.Driver.List() {
-			fmt.Fprintln(l.Logger, target)
-		}
-		return nil
+		return l.printAllTargets()
 	}
-
-	// resolve a single target
 	if len(args) == 1 {
-		destination, err := l.Driver.Resolve(args[0])
-		if err != nil {
-			return err
-		}
-
-		fmt.Fprintln(l.Logger, destination)
-		return nil
+		return l.printTargetDestination(args[0])
 	}
 
 	return ErrTooManyArgs
+}
+
+func (l List) printAllTargets() error {
+	for _, target := range l.Driver.List() {
+		fmt.Fprintln(l.Logger, target)
+	}
+	return nil
+}
+
+func (l List) printTargetDestination(name string) error {
+	destination, err := l.Driver.Resolve(name)
+	if err != nil {
+		return err
+	}
+	fmt.Fprintln(l.Logger, destination)
+	return nil
 }

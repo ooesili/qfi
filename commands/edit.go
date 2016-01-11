@@ -15,5 +15,6 @@ func (e Edit) Run(args []string) error {
 	if len(args) > 1 {
 		return ErrTooManyArgs
 	}
+
 	return e.Driver.Edit(args[0])
 }

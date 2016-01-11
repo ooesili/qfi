@@ -31,13 +31,10 @@ func (a *Shell) Run(args []string) error {
 		return ErrTooManyArgs
 	}
 
-	// get script
 	data, err := a.Driver.GetScript(args[0], args[1])
 	if err != nil {
 		return err
 	}
-
-	// write contents
 	a.Logger.Write(data)
 	return nil
 }
