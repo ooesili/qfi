@@ -36,8 +36,7 @@ func (c Config) Add(name, destination string) error {
 	}
 
 	targetFile := c.targetFile(name)
-	err := addAbsLink(destination, targetFile)
-	if err != nil {
+	if err := addAbsLink(destination, targetFile); err != nil {
 		return err
 	}
 
@@ -108,8 +107,7 @@ func (c Config) ensureTargetAbsent(name string) error {
 
 func (c Config) deleteTargets(names []string) error {
 	for _, name := range names {
-		err := os.Remove(c.targetFile(name))
-		if err != nil {
+		if err := os.Remove(c.targetFile(name)); err != nil {
 			pathErr := err.(*os.PathError).Err
 			return fmt.Errorf("cannot remove target: %s: %s", name, pathErr)
 		}
