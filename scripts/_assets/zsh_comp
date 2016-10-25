@@ -5,7 +5,7 @@ _qfi_targets() {
   local target
   local -a targets
   qfi -l 2>/dev/null | while read target; do
-    targets+=$target
+    targets+="$target"
   done
   _describe -t qfi-targets 'target' targets
 }
